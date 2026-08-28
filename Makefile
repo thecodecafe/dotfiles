@@ -60,3 +60,5 @@ unlink-tmux:
 
 test:
 	@"$(REPO_ROOT)/tests/manage-skill-links-test.sh"
+	@"$(REPO_ROOT)/tests/manage-dotfile-link-test.sh"
+	@"$(REPO_ROOT)/tests/tmux-config-test.sh"
