@@ -1,0 +1,14 @@
+font-family = "CommitMono Nerd Font Mono"
+font-size = 12
+
+background-opacity = 1
+
+background = #32302f
+foreground = #EBDBB2
+
+cursor-color = #FE8010
+cursor-text = #1D2021
+
+selection-background = #FE8019
+selection-foreground = #1D2021
+
