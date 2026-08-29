@@ -46,6 +46,7 @@ printf '%s\n' \
     '  assert(vim.g.mapleader == " ")' \
     '  assert(vim.o.number == true)' \
     '  assert(vim.o.relativenumber == true)' \
+    '  assert(vim.o.signcolumn == "yes")' \
     '  assert(vim.o.timeoutlen == 300)' \
     '  assert(vim.fn.maparg("<leader>w", "n"):match("write"))' \
     '  assert(vim.fn.maparg("jj", "i") == "<Esc>")' \
