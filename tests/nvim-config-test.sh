@@ -47,6 +47,10 @@ printf '%s\n' \
     '  assert(vim.o.number == true)' \
     '  assert(vim.o.relativenumber == true)' \
     '  assert(vim.o.signcolumn == "yes")' \
+    '  assert(vim.o.cmdheight == 0)' \
+    '  assert(vim.o.showcmd == true)' \
+    '  assert(vim.o.showcmdloc == "statusline")' \
+    '  assert(vim.o.showmode == false)' \
     '  assert(vim.o.timeoutlen == 300)' \
     '  assert(vim.fn.maparg("<leader>w", "n"):match("write"))' \
     '  assert(vim.fn.maparg("jj", "i") == "<Esc>")' \
@@ -154,6 +158,8 @@ printf '%s\n' \
     '  assert(type(completion[1].config) == "function")' \
     '  local statusline = require("plugins.statusline")' \
     '  assert(statusline[1][1] == "nvim-lualine/lualine.nvim")' \
+    '  assert(statusline[1].lazy == false)' \
+    '  assert(statusline[1].priority == 900)' \
     '  assert(vim.tbl_contains(statusline[1].dependencies, "nvim-tree/nvim-web-devicons"))' \
     '  assert(statusline[1].opts.options.theme == "gruvbox")' \
     '  assert(statusline[1].opts.options.globalstatus == true)' \
@@ -164,8 +170,15 @@ printf '%s\n' \
     '  assert(type(statusline[1].opts.sections.lualine_x[1]) == "function")' \
     '  assert(statusline[1].opts.sections.lualine_x[1]() == "")' \
     '  assert(statusline[1].opts.sections.lualine_x[2] == "filetype")' \
+    '  assert(vim.deep_equal(statusline[1].opts.sections.lualine_y, { "%S" }))' \
     '  assert(type(statusline[1].opts.sections.lualine_z[1]) == "function")' \
     '  assert(statusline[1].opts.sections.lualine_z[1]():match("^%d+/%d+:%d+$"))' \
+    '  local noice = require("plugins.noice")' \
+    '  assert(noice[1][1] == "folke/noice.nvim")' \
+    '  assert(noice[1].event == "VeryLazy")' \
+    '  assert(vim.tbl_contains(noice[1].dependencies, "MunifTanjim/nui.nvim"))' \
+    '  assert(noice[1].opts.presets.bottom_search == false)' \
+    '  assert(noice[1].opts.presets.command_palette == true)' \
     '  local telescope_config = require("config.telescope")' \
     '  local original_root = vim.fs.root' \
     '  vim.fs.root = function(buffer, marker)' \
@@ -255,6 +268,8 @@ grep -Fq '"lualine.nvim"' "$lazy_lock" || fail 'lualine lockfile entry is missin
 grep -Fq '"telescope.nvim"' "$lazy_lock" || fail 'Telescope lockfile entry is missing'
 grep -Fq '"plenary.nvim"' "$lazy_lock" || fail 'Plenary lockfile entry is missing'
 grep -Fq '"nvim-web-devicons"' "$lazy_lock" || fail 'file icons lockfile entry is missing'
+grep -Fq '"noice.nvim"' "$lazy_lock" || fail 'Noice lockfile entry is missing'
+grep -Fq '"nui.nvim"' "$lazy_lock" || fail 'Nui lockfile entry is missing'
 grep -Fq 'default_capabilities()' "$config_directory/lua/config/lsp.lua" || fail 'enhanced LSP completion capabilities are missing'
 grep -Fq '"<C-Space>"' "$config_directory/lua/plugins/completion.lua" || fail 'manual completion mapping is missing'
 grep -Fq '"<Tab>"' "$config_directory/lua/plugins/completion.lua" || fail 'next completion mapping is missing'

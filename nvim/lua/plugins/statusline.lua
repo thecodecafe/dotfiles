@@ -20,6 +20,8 @@ end
 return {
   {
     "nvim-lualine/lualine.nvim",
+    lazy = false,
+    priority = 900,
     dependencies = { "nvim-tree/nvim-web-devicons" },
     opts = {
       options = {
@@ -31,7 +33,7 @@ return {
         lualine_b = { "branch" },
         lualine_c = { "filename", "diagnostics" },
         lualine_x = { selection_count, "filetype" },
-        lualine_y = {},
+        lualine_y = { "%S" },
         lualine_z = { location },
       },
     },
