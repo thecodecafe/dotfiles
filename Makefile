@@ -12,6 +12,7 @@ KEY_REPEAT_SCRIPT := $(REPO_ROOT)/key-repeat/configure.sh
 KEY_REPEAT_RESET_SCRIPT := $(REPO_ROOT)/key-repeat/reset.sh
 TMUX_CONFIG_SOURCE ?= $(REPO_ROOT)/tmux/tmux.conf
 AEROSPACE_MANAGER := $(REPO_ROOT)/scripts/manage-aerospace-link.sh
+KARABINER_CONFIG_SOURCE ?= $(REPO_ROOT)/karabiner/karabiner.json
 
 CODEX_SKILLS_DIR ?= $(HOME)/.agents/skills
 CLAUDE_SKILLS_DIR ?= $(HOME)/.claude/skills
@@ -22,8 +23,9 @@ NVIM_LUAROCKS_DIR ?= $(HOME)/.local/share/nvim/lazy-rocks/hererocks
 TMUX_CONFIG_FILE ?= $(HOME)/.config/tmux/tmux.conf
 TMUX_TPM_DIR ?= $(HOME)/.tmux/plugins/tpm
 AEROSPACE_CONFIG_FILE ?= $(HOME)/.config/aerospace/aerospace.toml
+KARABINER_CONFIG_FILE ?= $(HOME)/.config/karabiner/karabiner.json
 
-.PHONY: help all codex claude opencode ghostty aerospace nvim nvim-luarocks tmux tmux-tpm key-repeat reset-key-repeat unlink-all unlink-codex unlink-claude unlink-opencode unlink-ghostty unlink-aerospace unlink-nvim unlink-tmux test
+.PHONY: help all codex claude opencode ghostty aerospace karabiner nvim nvim-luarocks tmux tmux-tpm key-repeat reset-key-repeat unlink-all unlink-codex unlink-claude unlink-opencode unlink-ghostty unlink-aerospace unlink-karabiner unlink-nvim unlink-tmux test
 
 help:
 	@printf '%s\n' \
@@ -33,6 +35,7 @@ help:
 		'  make opencode       Link skills for OpenCode' \
 		'  make ghostty        Link the Ghostty configuration' \
 		'  make aerospace      Link the AeroSpace configuration' \
+		'  make karabiner      Link the Karabiner Elements configuration' \
 		'  make nvim           Link the Neovim configuration' \
 		'  make nvim-luarocks  Install Neovim Lua 5.1 and LuaRocks' \
 		'  make tmux           Link the tmux configuration' \
@@ -45,6 +48,7 @@ help:
 		'  make unlink-opencode Remove repository-owned OpenCode links' \
 		'  make unlink-ghostty Remove the repository-owned Ghostty link' \
 		'  make unlink-aerospace Remove the repository-owned AeroSpace link' \
+		'  make unlink-karabiner Remove the repository-owned Karabiner link' \
 		'  make unlink-nvim    Remove the repository-owned Neovim link' \
 		'  make unlink-tmux    Remove the repository-owned tmux link' \
 		'  make unlink-all     Remove all repository-owned links' \
@@ -52,7 +56,7 @@ help:
 		'' \
 		'Destination variables can be overridden on the command line.'
 
-all: codex claude opencode ghostty aerospace nvim tmux
+all: codex claude opencode ghostty aerospace karabiner nvim tmux
 
 codex:
 	@"$(SKILLS_MANAGER)" link "$(SKILLS_SOURCE)" "$(CODEX_SKILLS_DIR)"
@@ -68,6 +72,9 @@ ghostty:
 
 aerospace:
 	@"$(AEROSPACE_MANAGER)" link "$(AEROSPACE_CONFIG_FILE)"
+
+karabiner:
+	@"$(DOTFILE_MANAGER)" link "$(KARABINER_CONFIG_SOURCE)" "$(KARABINER_CONFIG_FILE)"
 
 nvim:
 	@"$(NVIM_MANAGER)" link "$(NVIM_CONFIG_DIR)"
@@ -94,7 +101,7 @@ key-repeat:
 reset-key-repeat:
 	@"$(KEY_REPEAT_RESET_SCRIPT)"
 
-unlink-all: unlink-codex unlink-claude unlink-opencode unlink-ghostty unlink-aerospace unlink-nvim unlink-tmux
+unlink-all: unlink-codex unlink-claude unlink-opencode unlink-ghostty unlink-aerospace unlink-karabiner unlink-nvim unlink-tmux
 
 unlink-codex:
 	@"$(SKILLS_MANAGER)" unlink "$(SKILLS_SOURCE)" "$(CODEX_SKILLS_DIR)"
@@ -110,6 +117,9 @@ unlink-ghostty:
 
 unlink-aerospace:
 	@"$(AEROSPACE_MANAGER)" unlink "$(AEROSPACE_CONFIG_FILE)"
+
+unlink-karabiner:
+	@"$(DOTFILE_MANAGER)" unlink "$(KARABINER_CONFIG_SOURCE)" "$(KARABINER_CONFIG_FILE)"
 
 unlink-nvim:
 	@"$(NVIM_MANAGER)" unlink "$(NVIM_CONFIG_DIR)"
