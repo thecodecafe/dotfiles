@@ -9,6 +9,7 @@ This is a modular Neovim configuration bootstrapped from [lazy.nvim](https://git
 - Completion through nvim-cmp and LuaSnip.
 - LSP diagnostics, details popups, rename with `F2`, definition/reference navigation (`gd`), definition preview (`gh`), and stable diagnostic signs.
 - Relative and absolute line numbers; `<leader>w` saves the current buffer; `jj` or `kk` exits insert mode.
+- Yanked text is briefly highlighted, while search highlighting is transient and clears after searching or leaving Normal mode.
 - Format-on-save for Go, JSON, Lua, and YAML when the matching formatter-capable LSP is attached.
 - Neogit on `<leader>gg`, Diffview close on `<leader>dq`, and seamless tmux/editor navigation with `Ctrl-h/j/k/l/\`.
 
@@ -39,4 +40,3 @@ The first launch may download lazy.nvim and plugins. Open `:Lazy` to inspect plu
 ## Testing
 
 Run `make test` from the repository root. The Neovim test uses an isolated temporary data directory and a stub lazy.nvim module, so it does not need to modify the live editor installation.
-

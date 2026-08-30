@@ -71,6 +71,13 @@ printf '%s\n' \
     '  assert(vim.o.showcmd == true)' \
     '  assert(vim.o.showcmdloc == "statusline")' \
     '  assert(vim.o.showmode == false)' \
+    '  assert(vim.o.incsearch == true)' \
+    '  assert(vim.o.hlsearch == false)' \
+    '  local feedback_autocmds = vim.api.nvim_get_autocmds({ group = "nvim-editor-feedback" })' \
+    '  assert(#feedback_autocmds == 8)' \
+    '  local feedback_events = {}' \
+    '  for _, autocmd in ipairs(feedback_autocmds) do feedback_events[autocmd.event] = true end' \
+    '  assert(feedback_events.TextYankPost and feedback_events.CmdlineEnter and feedback_events.CmdlineLeave and feedback_events.BufLeave and feedback_events.ModeChanged)' \
     '  assert(vim.o.timeoutlen == 300)' \
     '  assert(vim.fn.maparg("<leader>w", "n"):match("write"))' \
     '  assert(vim.fn.maparg("jj", "i") == "<Esc>")' \
@@ -197,6 +204,7 @@ printf '%s\n' \
     '  assert(noice[1][1] == "folke/noice.nvim")' \
     '  assert(noice[1].event == "VeryLazy")' \
     '  assert(vim.tbl_contains(noice[1].dependencies, "MunifTanjim/nui.nvim"))' \
+    '  assert(noice[1].opts.messages.view_search == false)' \
     '  assert(noice[1].opts.presets.bottom_search == false)' \
     '  assert(noice[1].opts.presets.command_palette == true)' \
     '  local telescope_config = require("config.telescope")' \
