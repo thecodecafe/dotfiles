@@ -214,8 +214,28 @@ printf '%s\n' \
     '  vim.lsp.get_clients = function() return { {} } end' \
     '  telescope_config.workspace_symbols()' \
     '  assert(vim.g.symbol_picker_opened == true)' \
+    '  local next_action = function() end' \
+    '  local previous_action = function() end' \
+    '  package.loaded["telescope.actions"] = {' \
+    '    move_selection_next = next_action,' \
+    '    move_selection_previous = previous_action,' \
+    '  }' \
+    '  package.loaded["telescope.builtin"].lsp_references = function(opts)' \
+    '    assert(opts.include_declaration == false and opts.include_current_line == true)' \
+    '    assert(opts.jump_type == "never")' \
+    '    local mappings = {}' \
+    '    assert(opts.attach_mappings(0, function(mode, lhs, action)' \
+    '      mappings[mode .. lhs] = action' \
+    '    end) == true)' \
+    '    assert(mappings["i<Tab>"] == next_action and mappings["n<Tab>"] == next_action)' \
+    '    assert(mappings["i<S-Tab>"] == previous_action and mappings["n<S-Tab>"] == previous_action)' \
+    '    vim.g.reference_picker_opened = true' \
+    '  end' \
+    '  telescope_config.references()' \
+    '  assert(vim.g.reference_picker_opened == true)' \
     '  vim.lsp.get_clients = original_get_clients' \
     '  vim.notify = original_notify' \
+    '  package.loaded["telescope.actions"] = nil' \
     '  package.loaded["telescope.builtin"] = nil' \
     '  local telescope = require("plugins.telescope")' \
     '  assert(telescope[1][1] == "nvim-telescope/telescope.nvim")' \
@@ -224,9 +244,141 @@ printf '%s\n' \
     '  assert(vim.tbl_contains(telescope[1].dependencies, "nvim-tree/nvim-web-devicons"))' \
     '  assert(telescope[1].keys[1][1] == "ff")' \
     '  assert(telescope[1].keys[1][2] == telescope_config.find_files)' \
-    '  assert(telescope[1].keys[2][1] == "fs")' \
-    '  assert(telescope[1].keys[2][2] == telescope_config.workspace_symbols)' \
+    '  assert(telescope[1].keys[2][1] == "fr")' \
+    '  assert(telescope[1].keys[2][2] == telescope_config.buffers)' \
+    '  assert(telescope[1].keys[3][1] == "fs")' \
+    '  assert(telescope[1].keys[3][2] == telescope_config.workspace_symbols)' \
     '  local lsp_config = require("config.lsp")' \
+    '  lsp_config.setup_keymaps()' \
+    '  local lsp_attach_autocmds = vim.api.nvim_get_autocmds({ group = "nvim-lsp-keymaps", event = "LspAttach" })' \
+    '  assert(#lsp_attach_autocmds == 1 and type(lsp_attach_autocmds[1].callback) == "function")' \
+    '  local function find_buffer_map(lhs)' \
+    '    for _, mapping in ipairs(vim.api.nvim_buf_get_keymap(0, "n")) do' \
+    '      if mapping.lhs == lhs then return mapping end' \
+    '    end' \
+    '  end' \
+    '  local original_get_client_by_id = vim.lsp.get_client_by_id' \
+    '  local original_rename = vim.lsp.buf.rename' \
+    '  local navigation = require("config.lsp_navigation")' \
+    '  local original_goto = navigation.goto_definition_or_references' \
+    '  local original_preview = navigation.preview_definition' \
+    '  vim.lsp.get_client_by_id = function(client_id)' \
+    '    assert(client_id == 41)' \
+    '    return { supports_method = function() return false end }' \
+    '  end' \
+    '  lsp_config.attach_keymaps({ buf = 0, data = { client_id = 41 } })' \
+    '  assert(find_buffer_map("<F2>") == nil and find_buffer_map("gd") == nil and find_buffer_map("gh") == nil)' \
+    '  vim.lsp.buf.rename = function() vim.g.lsp_rename_called = true end' \
+    '  navigation.goto_definition_or_references = function() vim.g.lsp_goto_called = true end' \
+    '  navigation.preview_definition = function() vim.g.lsp_preview_called = true end' \
+    '  vim.lsp.get_client_by_id = function()' \
+    '    return { supports_method = function(_, method)' \
+    '      return method == "textDocument/rename" or method == "textDocument/definition"' \
+    '    end }' \
+    '  end' \
+    '  lsp_config.attach_keymaps({ buf = 0, data = { client_id = 42 } })' \
+    '  local rename_map = find_buffer_map("<F2>")' \
+    '  assert(rename_map and type(rename_map.callback) == "function" and rename_map.desc == "Rename symbol")' \
+    '  local goto_map = find_buffer_map("gd")' \
+    '  assert(goto_map and type(goto_map.callback) == "function" and goto_map.desc:match("definition"))' \
+    '  local preview_map = find_buffer_map("gh")' \
+    '  assert(preview_map and type(preview_map.callback) == "function" and preview_map.desc == "Preview definition")' \
+    '  rename_map.callback()' \
+    '  goto_map.callback()' \
+    '  preview_map.callback()' \
+    '  assert(vim.g.lsp_rename_called and vim.g.lsp_goto_called and vim.g.lsp_preview_called)' \
+    '  vim.keymap.del("n", "<F2>", { buffer = 0 })' \
+    '  vim.keymap.del("n", "gd", { buffer = 0 })' \
+    '  vim.keymap.del("n", "gh", { buffer = 0 })' \
+    '  vim.lsp.get_client_by_id = original_get_client_by_id' \
+    '  vim.lsp.buf.rename = original_rename' \
+    '  navigation.goto_definition_or_references = original_goto' \
+    '  navigation.preview_definition = original_preview' \
+    '  local nav_original_get_clients = vim.lsp.get_clients' \
+    '  local nav_original_get_client_by_id = vim.lsp.get_client_by_id' \
+    '  local nav_original_request_all = vim.lsp.buf_request_all' \
+    '  local nav_original_definition = vim.lsp.buf.definition' \
+    '  local nav_original_preview_location = vim.lsp.util.preview_location' \
+    '  local nav_original_notify = vim.notify' \
+    '  local nav_original_references = telescope_config.references' \
+    '  local fake_client = { offset_encoding = "utf-16" }' \
+    '  local nav_bufnr = vim.api.nvim_get_current_buf()' \
+    '  local definition_result' \
+    '  local delay_definition_response = false' \
+    '  local pending_definition_response' \
+    '  vim.lsp.get_clients = function(filter)' \
+    '    assert(filter.bufnr == nav_bufnr and filter.method == "textDocument/definition")' \
+    '    return { fake_client }' \
+    '  end' \
+    '  vim.lsp.get_client_by_id = function(client_id)' \
+    '    assert(client_id == 7)' \
+    '    return fake_client' \
+    '  end' \
+    '  vim.lsp.buf_request_all = function(bufnr, method, params, callback)' \
+    '    assert(bufnr == nav_bufnr and method == "textDocument/definition")' \
+    '    assert(type(params(fake_client).position) == "table")' \
+    '    if delay_definition_response then pending_definition_response = callback else callback({ [7] = { result = definition_result } }) end' \
+    '  end' \
+    '  vim.lsp.buf.definition = function() vim.g.definition_jump_count = (vim.g.definition_jump_count or 0) + 1 end' \
+    '  telescope_config.references = function() vim.g.references_count = (vim.g.references_count or 0) + 1 end' \
+    '  local source_cursor = vim.api.nvim_win_get_cursor(0)' \
+    '  local current_uri = vim.uri_from_bufnr(0)' \
+    '  definition_result = {' \
+    '    uri = vim.uri_from_fname("/tmp/definition.go"),' \
+    '    range = { start = { line = 3, character = 0 }, ["end"] = { line = 3, character = 4 } },' \
+    '  }' \
+    '  navigation.goto_definition_or_references()' \
+    '  assert(vim.g.definition_jump_count == 1 and vim.g.references_count == nil)' \
+    '  definition_result = {' \
+    '    uri = current_uri,' \
+    '    range = {' \
+    '      start = { line = source_cursor[1] - 1, character = 0 },' \
+    '      ["end"] = { line = source_cursor[1] - 1, character = 5 },' \
+    '    },' \
+    '  }' \
+    '  navigation.goto_definition_or_references()' \
+    '  assert(vim.g.references_count == 1)' \
+    '  local location_link = {' \
+    '    targetUri = current_uri,' \
+    '    targetSelectionRange = {' \
+    '      start = { line = source_cursor[1] - 1, character = 0 },' \
+    '      ["end"] = { line = source_cursor[1] - 1, character = 5 },' \
+    '    },' \
+    '    targetRange = {' \
+    '      start = { line = source_cursor[1] - 1, character = 0 },' \
+    '      ["end"] = { line = source_cursor[1], character = 0 },' \
+    '    },' \
+    '  }' \
+    '  definition_result = location_link' \
+    '  navigation.goto_definition_or_references()' \
+    '  assert(vim.g.references_count == 2)' \
+    '  vim.lsp.util.preview_location = function(location, opts)' \
+    '    assert(location == location_link and opts.border == "rounded" and opts.focusable == true)' \
+    '    vim.g.definition_previewed = true' \
+    '  end' \
+    '  navigation.preview_definition()' \
+    '  assert(vim.g.definition_previewed == true)' \
+    '  definition_result = nil' \
+    '  vim.notify = function(message, level)' \
+    '    assert(message == "No definition found" and level == vim.log.levels.INFO)' \
+    '    vim.g.missing_definition_notified = true' \
+    '  end' \
+    '  navigation.preview_definition()' \
+    '  assert(vim.g.missing_definition_notified == true)' \
+    '  definition_result = location_link' \
+    '  delay_definition_response = true' \
+    '  navigation.goto_definition_or_references()' \
+    '  vim.api.nvim_win_set_cursor(0, { source_cursor[1] + 1, 0 })' \
+    '  pending_definition_response({ [7] = { result = definition_result } })' \
+    '  assert(vim.g.references_count == 2 and vim.g.definition_jump_count == 1)' \
+    '  vim.api.nvim_win_set_cursor(0, source_cursor)' \
+    '  vim.lsp.get_clients = nav_original_get_clients' \
+    '  vim.lsp.get_client_by_id = nav_original_get_client_by_id' \
+    '  vim.lsp.buf_request_all = nav_original_request_all' \
+    '  vim.lsp.buf.definition = nav_original_definition' \
+    '  vim.lsp.util.preview_location = nav_original_preview_location' \
+    '  vim.notify = nav_original_notify' \
+    '  telescope_config.references = nav_original_references' \
     '  local expected_servers = { "gopls", "lua_ls", "ts_ls", "cssls", "html", "somesass_ls", "jsonls", "yamlls" }' \
     '  assert(vim.deep_equal(lsp_config.servers, expected_servers))' \
     '  local lsp_plugins = require("plugins.lsp")' \

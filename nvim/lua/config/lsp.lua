@@ -1,4 +1,5 @@
 local M = {}
+local navigation = require("config.lsp_navigation")
 
 M.servers = {
   "gopls",
@@ -17,7 +18,43 @@ function M.ensure_installed()
   end, M.servers)
 end
 
+function M.attach_keymaps(event)
+  local client = vim.lsp.get_client_by_id(event.data.client_id)
+  if not client then
+    return
+  end
+
+  if client:supports_method("textDocument/rename") then
+    vim.keymap.set("n", "<F2>", vim.lsp.buf.rename, {
+      buffer = event.buf,
+      desc = "Rename symbol",
+    })
+  end
+
+  if client:supports_method("textDocument/definition") then
+    vim.keymap.set("n", "gd", navigation.goto_definition_or_references, {
+      buffer = event.buf,
+      desc = "Go to definition or find references",
+    })
+    vim.keymap.set("n", "gh", navigation.preview_definition, {
+      buffer = event.buf,
+      desc = "Preview definition",
+    })
+  end
+end
+
+function M.setup_keymaps()
+  local group = vim.api.nvim_create_augroup("nvim-lsp-keymaps", { clear = true })
+  vim.api.nvim_create_autocmd("LspAttach", {
+    group = group,
+    callback = M.attach_keymaps,
+    desc = "Set supported LSP keymaps",
+  })
+end
+
 function M.setup(mason_lspconfig_opts)
+  M.setup_keymaps()
+
   vim.lsp.config("*", {
     capabilities = require("cmp_nvim_lsp").default_capabilities(),
   })
