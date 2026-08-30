@@ -43,6 +43,26 @@ printf '%s\n' \
     '  assert(oil.opts.default_file_explorer == true)' \
     '  assert(oil.keys[1][1] == "-")' \
     '  assert(oil.keys[1][2] == "<CMD>Oil<CR>")' \
+    '  local neogit = require("plugins.neogit")' \
+    '  assert(neogit[1][1] == "NeogitOrg/neogit")' \
+    '  assert(neogit[1].cmd == "Neogit")' \
+    '  assert(vim.tbl_contains(neogit[1].dependencies, "nvim-telescope/telescope.nvim"))' \
+    '  assert(vim.tbl_contains(neogit[1].dependencies, "sindrets/diffview.nvim"))' \
+    '  assert(vim.tbl_contains(neogit[1].dependencies, "m00qek/baleia.nvim"))' \
+    '  assert(neogit[1].keys[1][1] == "<leader>gg")' \
+    '  assert(neogit[1].keys[1][2] == "<cmd>Neogit kind=vsplit<cr>")' \
+    '  assert(neogit[1].keys[1].desc == "Open Neogit")' \
+    '  assert(neogit[1].opts.integrations.telescope == true)' \
+    '  local diffview = require("plugins.diffview")' \
+    '  assert(diffview[1][1] == "sindrets/diffview.nvim")' \
+    '  local diffview_contexts = { "view", "file_panel", "file_history_panel", "option_panel", "help_panel" }' \
+    '  for _, context in ipairs(diffview_contexts) do' \
+    '    local mapping = diffview[1].opts.keymaps[context][1]' \
+    '    assert(mapping[1] == "n" and mapping[2] == "<leader>dq")' \
+    '    assert(mapping[3] == "<cmd>DiffviewClose<cr>")' \
+    '    assert(mapping[4].desc == "Close Diffview")' \
+    '  end' \
+    '  assert(vim.fn.maparg("<leader>dq", "n") == "")' \
     '  assert(vim.g.mapleader == " ")' \
     '  assert(vim.o.number == true)' \
     '  assert(vim.o.relativenumber == true)' \
@@ -415,6 +435,9 @@ grep -Fq 'vim.o.background = "dark"' "$config_directory/lua/plugins/gruvbox.lua"
 grep -Fq 'vim.cmd.colorscheme("gruvbox")' "$config_directory/lua/plugins/gruvbox.lua" || fail 'Gruvbox colorscheme is not applied'
 grep -Fq '"gruvbox.nvim"' "$lazy_lock" || fail 'Gruvbox lockfile entry is missing'
 grep -Fq '"oil.nvim"' "$lazy_lock" || fail 'Oil lockfile entry is missing'
+grep -Fq '"neogit"' "$lazy_lock" || fail 'Neogit lockfile entry is missing'
+grep -Fq '"diffview.nvim"' "$lazy_lock" || fail 'Diffview lockfile entry is missing'
+grep -Fq '"baleia.nvim"' "$lazy_lock" || fail 'Baleia lockfile entry is missing'
 grep -Fq '"SchemaStore.nvim"' "$lazy_lock" || fail 'SchemaStore lockfile entry is missing'
 grep -Fq '"mason.nvim"' "$lazy_lock" || fail 'Mason lockfile entry is missing'
 grep -Fq '"mason-lspconfig.nvim"' "$lazy_lock" || fail 'Mason LSP bridge lockfile entry is missing'
