@@ -11,6 +11,13 @@ function M.find_files()
   })
 end
 
+function M.buffers()
+  require("telescope.builtin").buffers({
+    sort_mru = true,
+    ignore_current_buffer = false,
+  })
+end
+
 function M.workspace_symbols()
   local clients = vim.lsp.get_clients({
     bufnr = 0,

@@ -10,6 +10,7 @@ return {
     },
     keys = {
       { "ff", telescope.find_files, desc = "Find project files" },
+      { "fr", telescope.buffers, desc = "Find open buffers" },
       { "fs", telescope.workspace_symbols, desc = "Find project symbols" },
     },
     opts = {},

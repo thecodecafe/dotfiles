@@ -189,9 +189,15 @@ printf '%s\n' \
     '    find_files = function(opts)' \
     '      assert(opts.cwd == "/tmp/project" and opts.hidden == true and opts.no_ignore == nil)' \
     '    end,' \
+    '    buffers = function(opts)' \
+    '      assert(opts.sort_mru == true and opts.ignore_current_buffer == false)' \
+    '      vim.g.buffer_picker_opened = true' \
+    '    end,' \
     '    lsp_dynamic_workspace_symbols = function() vim.g.symbol_picker_opened = true end,' \
     '  }' \
     '  telescope_config.find_files()' \
+    '  telescope_config.buffers()' \
+    '  assert(vim.g.buffer_picker_opened == true)' \
     '  vim.fs.root = original_root' \
     '  local original_get_clients = vim.lsp.get_clients' \
     '  local original_notify = vim.notify' \
