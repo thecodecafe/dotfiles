@@ -124,6 +124,7 @@ test:
 	@"$(REPO_ROOT)/tests/ghostty-config-test.sh"
 	@"$(REPO_ROOT)/tests/manage-aerospace-link-test.sh"
 	@"$(REPO_ROOT)/tests/aerospace-config-test.sh"
+	@"$(REPO_ROOT)/tests/karabiner-config-test.sh"
 	@"$(REPO_ROOT)/tests/manage-nvim-link-test.sh"
 	@"$(REPO_ROOT)/tests/nvim-config-test.sh"
 	@"$(REPO_ROOT)/tests/install-nvim-luarocks-test.sh"
