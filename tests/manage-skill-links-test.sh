@@ -56,13 +56,25 @@ check_collision() {
         fail "$collision_type collision unexpectedly succeeded"
     fi
 
-    [ ! -e "$collision_dir/beta" ] && [ ! -L "$collision_dir/beta" ] || fail "$collision_type collision caused a partial install"
+    [ -L "$collision_dir/beta" ] || fail "$collision_type collision did not continue with unrelated links"
 }
 
 check_collision file
 check_collision directory
 check_collision symlink
 check_collision broken-symlink
+
+if command -v script >/dev/null 2>&1; then
+    replacement_dir=$test_root/replacement
+    mkdir -p "$replacement_dir"
+    printf '%s\n' 'preserve this skill' > "$replacement_dir/alpha"
+    printf 'y\n' | script -q /dev/null "$manager" link "$source_dir" "$replacement_dir" >/dev/null 2>&1
+    [ -L "$replacement_dir/alpha" ] || fail 'confirmed skill replacement did not create a symlink'
+    backup_file=$(find "$replacement_dir" -name 'alpha-backup-*' -type f -print -quit)
+    [ -n "$backup_file" ] || fail 'skill replacement did not create a timestamped backup'
+    [ "$(cat "$backup_file")" = 'preserve this skill' ] || fail 'skill backup contents changed'
+    [ -L "$replacement_dir/beta" ] || fail 'skill replacement did not link unrelated entries'
+fi
 
 "$manager" unlink "$source_dir" "$destination_dir"
 [ ! -e "$destination_dir/alpha" ] && [ ! -L "$destination_dir/alpha" ] || fail 'alpha link was not removed'

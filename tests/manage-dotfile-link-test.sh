@@ -51,6 +51,26 @@ check_collision directory
 check_collision symlink
 check_collision broken-symlink
 
+if command -v script >/dev/null 2>&1; then
+    replacement_file=$test_root/replacement/tmux.conf
+    mkdir -p "$(dirname "$replacement_file")"
+    printf '%s\n' 'preserve this file' > "$replacement_file"
+    printf 'y\n' | script -q /dev/null "$manager" link "$source_file" "$replacement_file" >/dev/null 2>&1
+    [ -L "$replacement_file" ] || fail 'confirmed file replacement did not create a symlink'
+    backup_file=$(find "$(dirname "$replacement_file")" -name 'tmux.conf-backup-*' -type f -print -quit)
+    [ -n "$backup_file" ] || fail 'file replacement did not create a timestamped backup'
+    [ "$(cat "$backup_file")" = 'preserve this file' ] || fail 'file backup contents changed'
+
+    replacement_directory=$test_root/replacement/config
+    mkdir "$replacement_directory"
+    printf '%s\n' 'preserve this directory' > "$replacement_directory/value"
+    printf 'y\n' | script -q /dev/null "$manager" link "$source_file" "$replacement_directory" >/dev/null 2>&1
+    [ -L "$replacement_directory" ] || fail 'confirmed directory replacement did not create a symlink'
+    backup_directory=$(find "$(dirname "$replacement_directory")" -name 'config-backup-*' -type d -print -quit)
+    [ -n "$backup_directory" ] || fail 'directory replacement did not create a timestamped backup'
+    [ "$(cat "$backup_directory/value")" = 'preserve this directory' ] || fail 'directory backup contents changed'
+fi
+
 "$manager" unlink "$source_file" "$destination_file"
 [ ! -e "$destination_file" ] && [ ! -L "$destination_file" ] || fail 'owned link was not removed'
 
