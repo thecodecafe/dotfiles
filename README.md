@@ -8,6 +8,7 @@ Personal development-machine configuration for AeroSpace, Ghostty, tmux, Neovim,
 | --- | --- | --- |
 | Ghostty | Terminal appearance and behavior | [ghostty/README.md](ghostty/README.md) |
 | AeroSpace | macOS window management and workspace bindings | [aerospace/README.md](aerospace/README.md) |
+| Karabiner Elements | Keyboard remapping and Hyper-key navigation | [karabiner/README.md](karabiner/README.md) |
 | tmux | Multiplexing, panes, persistence, and terminal integration | [tmux/README.md](tmux/README.md) |
 | Neovim | Lazy.nvim-based editor configuration | [nvim/README.md](nvim/README.md) |
 | Skills | Shared `aidlc`, `commit`, and `maprepo` workflows | [skills/README.md](skills/README.md) |
@@ -18,6 +19,7 @@ Personal development-machine configuration for AeroSpace, Ghostty, tmux, Neovim,
 - macOS or another Unix-like system with a POSIX shell, `make`, and `git`.
 - [Ghostty](https://ghostty.org/) and the `CommitMono Nerd Font Mono` font for the terminal module.
 - [AeroSpace](https://github.com/nikitabobko/AeroSpace) for the window-management module.
+- [Karabiner Elements](https://karabiner-elements.pqrs.org/) for the keyboard-remapping module.
 - `tmux` for the tmux module. TPM and its plugins are installed separately over the network.
 - Neovim with Git. Neovim also expects a Go installation for `gopls`; the editor installs configured language servers through Mason.
 - `python3`, a C compiler (`cc`), and `make` if installing Neovim's Lua 5.1/LuaRocks environment with `make nvim-luarocks`.
@@ -28,7 +30,8 @@ Personal development-machine configuration for AeroSpace, Ghostty, tmux, Neovim,
 From the repository root:
 
 ```sh
-make all                 # link skills, AeroSpace, Ghostty, Neovim, and tmux
+make all                 # link skills, AeroSpace, Ghostty, Karabiner, Neovim, and tmux
+make karabiner          # link the Karabiner Elements configuration
 make nvim-luarocks       # optional, enables Lua 5.1/LuaRocks support
 make tmux-tpm            # explicit networked TPM/plugin installation
 make key-repeat          # optional macOS-wide keyboard settings
@@ -48,7 +51,7 @@ Destination paths can be overridden on the command line; see the module guides a
 
 ## Repository structure
 
-- `aerospace/`, `ghostty/`, `tmux/`, and `nvim/` contain source configurations.
+- `aerospace/`, `ghostty/`, `karabiner/`, `tmux/`, and `nvim/` contain source configurations.
 - `skills/` contains the reusable skill definitions.
 - `key-repeat/` contains the macOS keyboard repetition script.
 - `scripts/` contains safe link and dependency installers.
