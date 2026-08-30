@@ -11,6 +11,8 @@ The tmux configuration keeps `Ctrl-b` as the prefix, enables true-color-related 
 - `Ctrl-b`, then `M-c`: attach/create a session from the active pane's directory.
 - Mouse and vi copy mode are enabled; use `v` to select and `y` to copy.
 - `Ctrl-b`, then `d`: detach from the current session (tmux's standard binding).
+- `Ctrl-b`, then `Ctrl-s`: save all sessions, windows, panes, layouts, and working directories with tmux-resurrect.
+- `Ctrl-b`, then `Ctrl-r`: restore the latest tmux-resurrect snapshot.
 
 ## Dependencies
 
@@ -28,6 +30,8 @@ make tmux-tpm
 
 `make tmux` links `tmux/tmux.conf` to `~/.config/tmux/tmux.conf`. `make tmux-tpm` safely installs TPM if needed, reloads an available tmux server, and runs TPM's plugin installer. It is intentionally separate from `make all` because it uses the network. Afterward, TPM's standard update/install workflow is `Ctrl-b`, then `I`.
 
+The Resurrect shortcuts require TPM and the `tmux-resurrect` plugin. The configured `tmux-continuum` plugin also saves the environment automatically every 15 minutes and restores the latest snapshot when a new tmux server starts.
+
 Remove only the repository-owned configuration link with:
 
 ```sh
@@ -35,4 +39,3 @@ make unlink-tmux
 ```
 
 Use `make test` to validate bindings and configuration in an isolated tmux server.
-
