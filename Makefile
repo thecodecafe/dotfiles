@@ -8,6 +8,8 @@ GHOSTTY_MANAGER := $(REPO_ROOT)/scripts/manage-ghostty-link.sh
 NVIM_MANAGER := $(REPO_ROOT)/scripts/manage-nvim-link.sh
 NVIM_LUAROCKS_INSTALLER := $(REPO_ROOT)/scripts/install-nvim-luarocks.sh
 TMUX_TPM_INSTALLER := $(REPO_ROOT)/scripts/install-tmux-tpm.sh
+KEY_REPEAT_SCRIPT := $(REPO_ROOT)/key-repeat/configure.sh
+KEY_REPEAT_RESET_SCRIPT := $(REPO_ROOT)/key-repeat/reset.sh
 TMUX_CONFIG_SOURCE ?= $(REPO_ROOT)/tmux/tmux.conf
 
 CODEX_SKILLS_DIR ?= $(HOME)/.agents/skills
@@ -19,7 +21,7 @@ NVIM_LUAROCKS_DIR ?= $(HOME)/.local/share/nvim/lazy-rocks/hererocks
 TMUX_CONFIG_FILE ?= $(HOME)/.config/tmux/tmux.conf
 TMUX_TPM_DIR ?= $(HOME)/.tmux/plugins/tpm
 
-.PHONY: help all codex claude opencode ghostty nvim nvim-luarocks tmux tmux-tpm unlink-all unlink-codex unlink-claude unlink-opencode unlink-ghostty unlink-nvim unlink-tmux test
+.PHONY: help all codex claude opencode ghostty nvim nvim-luarocks tmux tmux-tpm key-repeat reset-key-repeat unlink-all unlink-codex unlink-claude unlink-opencode unlink-ghostty unlink-nvim unlink-tmux test
 
 help:
 	@printf '%s\n' \
@@ -32,6 +34,8 @@ help:
 		'  make nvim-luarocks  Install Neovim Lua 5.1 and LuaRocks' \
 		'  make tmux           Link the tmux configuration' \
 		'  make tmux-tpm       Install the tmux plugin manager' \
+		'  make key-repeat     Configure macOS keyboard repetition' \
+		'  make reset-key-repeat Reset macOS keyboard repetition overrides' \
 		'  make all            Link all skills and dotfiles' \
 		'  make unlink-codex   Remove repository-owned Codex links' \
 		'  make unlink-claude  Remove repository-owned Claude links' \
@@ -77,6 +81,12 @@ tmux-tpm:
 	@"$(TMUX_TPM_DIR)/bin/install_plugins"
 	@printf '%s\n' 'Reload tmux with Ctrl-b, then r.'
 
+key-repeat:
+	@"$(KEY_REPEAT_SCRIPT)"
+
+reset-key-repeat:
+	@"$(KEY_REPEAT_RESET_SCRIPT)"
+
 unlink-all: unlink-codex unlink-claude unlink-opencode unlink-ghostty unlink-nvim unlink-tmux
 
 unlink-codex:
@@ -107,3 +117,4 @@ test:
 	@"$(REPO_ROOT)/tests/install-nvim-luarocks-test.sh"
 	@"$(REPO_ROOT)/tests/tmux-config-test.sh"
 	@"$(REPO_ROOT)/tests/install-tmux-tpm-test.sh"
+	@"$(REPO_ROOT)/tests/key-repeat-test.sh"
