@@ -276,4 +276,9 @@ run = "move-node-to-workspace A"
 if.app-id = "com.apple.Safari"
 run = "move-node-to-workspace B"
 
+[[on-window-detected]]
+if.app-id = "org.pqrs.Karabiner-Elements.Settings"
+run = "move-node-to-workspace c"
+
+
 
