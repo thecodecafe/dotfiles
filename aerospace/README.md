@@ -12,7 +12,7 @@ This module manages the AeroSpace window-manager configuration imported from the
 make aerospace
 ```
 
-This creates `~/.config/aerospace/aerospace.toml` (or the matching `$XDG_CONFIG_HOME` path when using the link manager directly) as a symlink to this module's configuration file. Existing unrelated destinations are never overwritten.
+This creates `~/.config/aerospace/aerospace.toml` (or the matching `$XDG_CONFIG_HOME` path when using the link manager directly) as a symlink to this module's configuration file. Existing unrelated symlinks are never overwritten. If a real file is present, linking asks for confirmation and backs it up beside the destination before replacing it.
 
 Remove only the repository-owned link with:
 

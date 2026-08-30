@@ -33,7 +33,7 @@ make nvim
 make nvim-luarocks   # optional but recommended when using Lua-rock-dependent plugins
 ```
 
-`make nvim` links this directory to `~/.config/nvim` (or `$XDG_CONFIG_HOME/nvim`) and reports if the LuaRocks environment is missing. It does not clone the Neovim source repository. Remove only the repository-owned link with `make unlink-nvim`.
+`make nvim` links this directory to `~/.config/nvim` (or `$XDG_CONFIG_HOME/nvim`) and reports if the LuaRocks environment is missing. If a real configuration directory exists, linking asks for confirmation and backs it up beside the destination before replacing it. Unrelated symlinks are never replaced. It does not clone the Neovim source repository. Remove only the repository-owned link with `make unlink-nvim`.
 
 The first launch may download lazy.nvim and plugins. Open `:Lazy` to inspect plugin state and `:Mason` to inspect language-server installations. The committed `lazy-lock.json` records plugin revisions for repeatable updates.
 

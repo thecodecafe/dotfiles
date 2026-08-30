@@ -38,7 +38,7 @@ make test                # run configuration and installer tests
 
 `make all` does not install networked dependencies. On first Neovim launch, lazy.nvim bootstraps itself and installs the declared plugins. Mason manages the configured language servers. TPM installs tmux plugins only when `make tmux-tpm` is run (or through TPM's normal `Ctrl-b`, then `I` workflow).
 
-Each link target refuses to replace an existing unrelated file, directory, or symlink. Unlink targets remove only links owned by this repository:
+Each link target protects unrelated symlinks. When a real file or directory already exists, it asks for confirmation before moving it to a sibling `<name>-backup-<unix timestamp>` path and creating the repository link. Unlink targets remove only links owned by this repository:
 
 ```sh
 make unlink-all
