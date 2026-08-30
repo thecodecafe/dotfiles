@@ -14,6 +14,7 @@ fi
 operation=$1
 source_input=$2
 destination_path=$3
+project_root=$(CDPATH= cd -- "$(dirname "$0")/.." && pwd -P)
 
 case "$operation" in
     link|unlink) ;;
@@ -29,20 +30,17 @@ source_parent=$(CDPATH= cd -- "$(dirname "$source_input")" && pwd -P)
 source_path=$source_parent/$(basename "$source_input")
 
 if [ "$operation" = link ]; then
-    if [ -e "$destination_path" ] || [ -L "$destination_path" ]; then
-        if [ -L "$destination_path" ] && [ "$(readlink "$destination_path")" = "$source_path" ]; then
+    if [ -L "$destination_path" ]; then
+        if [ "$(readlink "$destination_path")" = "$source_path" ]; then
             printf 'Already linked: %s\n' "$destination_path"
             exit 0
         fi
 
-        printf 'Refusing to replace existing destination: %s\n' "$destination_path" >&2
+        printf 'Refusing to replace unrelated symlink: %s\n' "$destination_path" >&2
         exit 1
     fi
 
-    mkdir -p "$(dirname "$destination_path")"
-    ln -s "$source_path" "$destination_path"
-    printf 'Linked: %s -> %s\n' "$destination_path" "$source_path"
-    exit 0
+    exec "$project_root/scripts/link-destination.sh" "$source_path" "$destination_path"
 fi
 
 if [ -L "$destination_path" ] && [ "$(readlink "$destination_path")" = "$source_path" ]; then

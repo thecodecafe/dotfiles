@@ -33,20 +33,17 @@ else
 fi
 
 if [ "$operation" = link ]; then
-    if [ -e "$destination_directory" ] || [ -L "$destination_directory" ]; then
-        if [ -L "$destination_directory" ] && [ "$(readlink "$destination_directory")" = "$source_directory" ]; then
+    if [ -L "$destination_directory" ]; then
+        if [ "$(readlink "$destination_directory")" = "$source_directory" ]; then
             printf 'Already linked: %s\n' "$destination_directory"
             exit 0
         fi
 
-        printf 'Refusing to replace existing destination: %s\n' "$destination_directory" >&2
+        printf 'Refusing to replace unrelated symlink: %s\n' "$destination_directory" >&2
         exit 1
     fi
 
-    mkdir -p "$(dirname "$destination_directory")"
-    ln -s "$source_directory" "$destination_directory"
-    printf 'Linked: %s -> %s\n' "$destination_directory" "$source_directory"
-    exit 0
+    exec "$project_root/scripts/link-destination.sh" "$source_directory" "$destination_directory"
 fi
 
 if [ -L "$destination_directory" ] && [ "$(readlink "$destination_directory")" = "$source_directory" ]; then

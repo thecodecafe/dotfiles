@@ -14,6 +14,7 @@ fi
 operation=$1
 source_input=$2
 destination_dir=$3
+project_root=$(CDPATH= cd -- "$(dirname "$0")/.." && pwd -P)
 
 case "$operation" in
     link|unlink) ;;
@@ -40,32 +41,8 @@ if [ "$skill_count" -eq 0 ]; then
 fi
 
 if [ "$operation" = link ]; then
-    conflict_found=0
-
-    for skill_dir in "$source_dir"/*; do
-        if [ ! -d "$skill_dir" ] || [ ! -f "$skill_dir/SKILL.md" ]; then
-            continue
-        fi
-
-        skill_name=${skill_dir##*/}
-        destination_path=$destination_dir/$skill_name
-
-        if [ -e "$destination_path" ] || [ -L "$destination_path" ]; then
-            if [ -L "$destination_path" ] && [ "$(readlink "$destination_path")" = "$skill_dir" ]; then
-                continue
-            fi
-
-            printf 'Refusing to replace existing destination: %s\n' "$destination_path" >&2
-            conflict_found=1
-        fi
-    done
-
-    if [ "$conflict_found" -ne 0 ]; then
-        printf 'No links were changed. Resolve the conflicts and try again.\n' >&2
-        exit 1
-    fi
-
     mkdir -p "$destination_dir"
+    link_failed=0
 
     for skill_dir in "$source_dir"/*; do
         if [ ! -d "$skill_dir" ] || [ ! -f "$skill_dir/SKILL.md" ]; then
@@ -75,15 +52,14 @@ if [ "$operation" = link ]; then
         skill_name=${skill_dir##*/}
         destination_path=$destination_dir/$skill_name
 
-        if [ -L "$destination_path" ]; then
+        if [ -L "$destination_path" ] && [ "$(readlink "$destination_path")" = "$skill_dir" ]; then
             printf 'Already linked: %s\n' "$destination_path"
-        else
-            ln -s "$skill_dir" "$destination_path"
-            printf 'Linked: %s -> %s\n' "$destination_path" "$skill_dir"
+        elif ! "$project_root/scripts/link-destination.sh" "$skill_dir" "$destination_path"; then
+            link_failed=1
         fi
     done
 
-    exit 0
+    exit "$link_failed"
 fi
 
 if [ ! -d "$destination_dir" ]; then
