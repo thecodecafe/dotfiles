@@ -7,7 +7,7 @@ This is a modular Neovim configuration bootstrapped from [lazy.nvim](https://git
 - Dark Gruvbox with soft contrast, Oil file browsing, and a Lualine statusline.
 - Telescope project-file search (`ff`), open-buffer search (`fr`), and workspace-symbol search (`fs`).
 - Completion through nvim-cmp and LuaSnip.
-- LSP diagnostics, details popups, rename with `F2`, definition/reference navigation (`gd`), definition preview (`gh`), and stable diagnostic signs.
+- LSP diagnostics, details popups, rename with `F2`, definition/reference navigation (`gd`), rich hover details (`gh`), and code actions (`<leader>.`).
 - Relative and absolute line numbers; `<leader>w` saves the current buffer; `jj` or `kk` exits insert mode.
 - Yanked text is briefly highlighted, while search highlighting is transient and clears after searching or leaving Normal mode.
 - Format-on-save for Go, JSON, Lua, and YAML when the matching formatter-capable LSP is attached.

@@ -41,6 +41,13 @@ function M.attach_keymaps(event)
       desc = "Preview definition",
     })
   end
+
+  if client:supports_method("textDocument/codeAction") then
+    vim.keymap.set("n", "<leader>.", vim.lsp.buf.code_action, {
+      buffer = event.buf,
+      desc = "LSP code actions",
+    })
+  end
 end
 
 function M.setup_keymaps()

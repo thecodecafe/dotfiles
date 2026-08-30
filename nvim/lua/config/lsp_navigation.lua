@@ -111,12 +111,10 @@ function M.goto_definition_or_references()
 end
 
 function M.preview_definition()
-  request_definitions(function(definitions)
-    vim.lsp.util.preview_location(definitions[1].location, {
-      border = "rounded",
-      focusable = true,
-    })
-  end)
+  vim.lsp.buf.hover({
+    border = "rounded",
+    focusable = true,
+  })
 end
 
 return M

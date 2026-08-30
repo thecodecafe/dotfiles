@@ -295,15 +295,17 @@ printf '%s\n' \
     '    return { supports_method = function() return false end }' \
     '  end' \
     '  lsp_config.attach_keymaps({ buf = 0, data = { client_id = 41 } })' \
-    '  assert(find_buffer_map("<F2>") == nil and find_buffer_map("gd") == nil and find_buffer_map("gh") == nil)' \
+    '  assert(find_buffer_map("<F2>") == nil and find_buffer_map("gd") == nil and find_buffer_map("gh") == nil and find_buffer_map(" .") == nil)' \
     '  vim.lsp.buf.rename = function() vim.g.lsp_rename_called = true end' \
     '  navigation.goto_definition_or_references = function() vim.g.lsp_goto_called = true end' \
     '  navigation.preview_definition = function() vim.g.lsp_preview_called = true end' \
     '  vim.lsp.get_client_by_id = function()' \
     '    return { supports_method = function(_, method)' \
-    '      return method == "textDocument/rename" or method == "textDocument/definition"' \
+    '      return method == "textDocument/rename" or method == "textDocument/definition" or method == "textDocument/codeAction"' \
     '    end }' \
     '  end' \
+    '  local original_code_action = vim.lsp.buf.code_action' \
+    '  vim.lsp.buf.code_action = function() vim.g.lsp_code_action_called = true end' \
     '  lsp_config.attach_keymaps({ buf = 0, data = { client_id = 42 } })' \
     '  local rename_map = find_buffer_map("<F2>")' \
     '  assert(rename_map and type(rename_map.callback) == "function" and rename_map.desc == "Rename symbol")' \
@@ -311,22 +313,27 @@ printf '%s\n' \
     '  assert(goto_map and type(goto_map.callback) == "function" and goto_map.desc:match("definition"))' \
     '  local preview_map = find_buffer_map("gh")' \
     '  assert(preview_map and type(preview_map.callback) == "function" and preview_map.desc == "Preview definition")' \
+    '  local code_action_map = find_buffer_map(" .")' \
+    '  assert(code_action_map and type(code_action_map.callback) == "function" and code_action_map.desc == "LSP code actions")' \
     '  rename_map.callback()' \
     '  goto_map.callback()' \
     '  preview_map.callback()' \
-    '  assert(vim.g.lsp_rename_called and vim.g.lsp_goto_called and vim.g.lsp_preview_called)' \
+    '  code_action_map.callback()' \
+    '  assert(vim.g.lsp_rename_called and vim.g.lsp_goto_called and vim.g.lsp_preview_called and vim.g.lsp_code_action_called)' \
     '  vim.keymap.del("n", "<F2>", { buffer = 0 })' \
     '  vim.keymap.del("n", "gd", { buffer = 0 })' \
     '  vim.keymap.del("n", "gh", { buffer = 0 })' \
+    '  vim.keymap.del("n", " .", { buffer = 0 })' \
     '  vim.lsp.get_client_by_id = original_get_client_by_id' \
     '  vim.lsp.buf.rename = original_rename' \
+    '  vim.lsp.buf.code_action = original_code_action' \
     '  navigation.goto_definition_or_references = original_goto' \
     '  navigation.preview_definition = original_preview' \
     '  local nav_original_get_clients = vim.lsp.get_clients' \
     '  local nav_original_get_client_by_id = vim.lsp.get_client_by_id' \
     '  local nav_original_request_all = vim.lsp.buf_request_all' \
     '  local nav_original_definition = vim.lsp.buf.definition' \
-    '  local nav_original_preview_location = vim.lsp.util.preview_location' \
+    '  local nav_original_hover = vim.lsp.buf.hover' \
     '  local nav_original_notify = vim.notify' \
     '  local nav_original_references = telescope_config.references' \
     '  local fake_client = { offset_encoding = "utf-16" }' \
@@ -380,19 +387,14 @@ printf '%s\n' \
     '  definition_result = location_link' \
     '  navigation.goto_definition_or_references()' \
     '  assert(vim.g.references_count == 2)' \
-    '  vim.lsp.util.preview_location = function(location, opts)' \
-    '    assert(location == location_link and opts.border == "rounded" and opts.focusable == true)' \
-    '    vim.g.definition_previewed = true' \
+    '  vim.lsp.buf.hover = function(opts)' \
+    '    assert(opts.border == "rounded" and opts.focusable == true)' \
+    '    vim.g.definition_previewed = (vim.g.definition_previewed or 0) + 1' \
     '  end' \
     '  navigation.preview_definition()' \
-    '  assert(vim.g.definition_previewed == true)' \
-    '  definition_result = nil' \
-    '  vim.notify = function(message, level)' \
-    '    assert(message == "No definition found" and level == vim.log.levels.INFO)' \
-    '    vim.g.missing_definition_notified = true' \
-    '  end' \
+    '  assert(vim.g.definition_previewed == 1)' \
     '  navigation.preview_definition()' \
-    '  assert(vim.g.missing_definition_notified == true)' \
+    '  assert(vim.g.definition_previewed == 2)' \
     '  definition_result = location_link' \
     '  delay_definition_response = true' \
     '  navigation.goto_definition_or_references()' \
@@ -404,7 +406,7 @@ printf '%s\n' \
     '  vim.lsp.get_client_by_id = nav_original_get_client_by_id' \
     '  vim.lsp.buf_request_all = nav_original_request_all' \
     '  vim.lsp.buf.definition = nav_original_definition' \
-    '  vim.lsp.util.preview_location = nav_original_preview_location' \
+    '  vim.lsp.buf.hover = nav_original_hover' \
     '  vim.notify = nav_original_notify' \
     '  telescope_config.references = nav_original_references' \
     '  local expected_servers = { "gopls", "lua_ls", "ts_ls", "cssls", "html", "somesass_ls", "jsonls", "yamlls" }' \
