@@ -18,6 +18,8 @@ Restart affected applications after running the command. The target changes macO
 
 If macOS refuses the global preference writes, the script restarts the current user's `cfprefsd` service and retries. If the service remains out of sync, it validates and backs up `.GlobalPreferences.plist`, changes only the two repeat keys, and verifies the result. A failed repair is rolled back automatically; the script never uses `sudo`.
 
+For a detailed explanation of the fallback, safety checks, and rollback behavior, see [SAFETY.md](SAFETY.md).
+
 To remove the overrides managed by this module and return to inherited macOS defaults:
 
 ```sh
