@@ -1,12 +1,13 @@
 # Dotfiles
 
-Personal development-machine configuration for Ghostty, tmux, Neovim, and reusable agent skills. The repository keeps configuration in version control and uses safe symlink managers to install it into standard user locations.
+Personal development-machine configuration for AeroSpace, Ghostty, tmux, Neovim, and reusable agent skills. The repository keeps configuration in version control and uses safe symlink managers to install it into standard user locations.
 
 ## Modules
 
 | Module | Purpose | Guide |
 | --- | --- | --- |
 | Ghostty | Terminal appearance and behavior | [ghostty/README.md](ghostty/README.md) |
+| AeroSpace | macOS window management and workspace bindings | [aerospace/README.md](aerospace/README.md) |
 | tmux | Multiplexing, panes, persistence, and terminal integration | [tmux/README.md](tmux/README.md) |
 | Neovim | Lazy.nvim-based editor configuration | [nvim/README.md](nvim/README.md) |
 | Skills | Shared `aidlc`, `commit`, and `maprepo` workflows | [skills/README.md](skills/README.md) |
@@ -16,6 +17,7 @@ Personal development-machine configuration for Ghostty, tmux, Neovim, and reusab
 
 - macOS or another Unix-like system with a POSIX shell, `make`, and `git`.
 - [Ghostty](https://ghostty.org/) and the `CommitMono Nerd Font Mono` font for the terminal module.
+- [AeroSpace](https://github.com/nikitabobko/AeroSpace) for the window-management module.
 - `tmux` for the tmux module. TPM and its plugins are installed separately over the network.
 - Neovim with Git. Neovim also expects a Go installation for `gopls`; the editor installs configured language servers through Mason.
 - `python3`, a C compiler (`cc`), and `make` if installing Neovim's Lua 5.1/LuaRocks environment with `make nvim-luarocks`.
@@ -26,7 +28,7 @@ Personal development-machine configuration for Ghostty, tmux, Neovim, and reusab
 From the repository root:
 
 ```sh
-make all                 # link skills, Ghostty, Neovim, and tmux
+make all                 # link skills, AeroSpace, Ghostty, Neovim, and tmux
 make nvim-luarocks       # optional, enables Lua 5.1/LuaRocks support
 make tmux-tpm            # explicit networked TPM/plugin installation
 make key-repeat          # optional macOS-wide keyboard settings
@@ -46,7 +48,7 @@ Destination paths can be overridden on the command line; see the module guides a
 
 ## Repository structure
 
-- `ghostty/`, `tmux/`, and `nvim/` contain source configurations.
+- `aerospace/`, `ghostty/`, `tmux/`, and `nvim/` contain source configurations.
 - `skills/` contains the reusable skill definitions.
 - `key-repeat/` contains the macOS keyboard repetition script.
 - `scripts/` contains safe link and dependency installers.
