@@ -227,6 +227,7 @@ printf '%s\n' \
     '  assert(lsp_plugins[1][1] == "mason-org/mason.nvim")' \
     '  assert(lsp_plugins[1].cmd == "Mason")' \
     '  assert(lsp_plugins[2][1] == "mason-org/mason-lspconfig.nvim")' \
+    '  assert(lsp_plugins[2].event == "VeryLazy")' \
     '  local expected_installs = vim.tbl_filter(function(server)' \
     '    return server ~= "gopls" or vim.fn.executable("go") == 1' \
     '  end, expected_servers)' \
