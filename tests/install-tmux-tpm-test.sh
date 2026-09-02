@@ -46,7 +46,7 @@ printf '%s\n' \
 chmod +x "$fake_bin/tmux"
 
 linked_config=$test_root/home/.config/tmux/tmux.conf
-link_output=$(PATH=$fake_bin:$PATH FAKE_GIT_LOG=$fake_git_log \
+link_output=$(PATH=$fake_bin:$PATH FAKE_GIT_LOG=$fake_git_log FAKE_EVENT_LOG=$fake_event_log \
     make -s -C "$project_root" tmux TMUX_CONFIG_FILE="$linked_config")
 [ -L "$linked_config" ] || fail 'make tmux did not link the configuration'
 case "$link_output" in
@@ -54,6 +54,10 @@ case "$link_output" in
     *) fail 'make tmux did not print the plugin installation instruction' ;;
 esac
 [ ! -e "$fake_git_log" ] || fail 'make tmux unexpectedly invoked Git'
+[ "$(sed -n '1p' "$fake_event_log")" = "source-file $linked_config" ] || \
+    fail 'make tmux did not reload the active server after linking'
+
+: > "$fake_event_log"
 
 destination=$test_root/home/.tmux/plugins/tpm
 PATH=$fake_bin:$PATH FAKE_GIT_LOG=$fake_git_log FAKE_TPM_LOG=$fake_tpm_log \
@@ -64,8 +68,8 @@ PATH=$fake_bin:$PATH FAKE_GIT_LOG=$fake_git_log FAKE_TPM_LOG=$fake_tpm_log \
 [ -x "$destination/tpm" ] || fail 'installer did not create an executable TPM entrypoint'
 [ "$(wc -l < "$fake_git_log" | tr -d ' ')" = 1 ] || fail 'installer did not clone exactly once'
 [ "$(wc -l < "$fake_tpm_log" | tr -d ' ')" = 1 ] || fail 'make tmux-tpm did not install plugins'
-[ "$(sed -n '1p' "$fake_event_log")" = "source-file $linked_config" ] || fail 'active tmux server was not reloaded first'
-[ "$(sed -n '2p' "$fake_event_log")" = install_plugins ] || fail 'plugins were not installed after reloading tmux'
+[ "$(sed -n '1p' "$fake_event_log")" = install_plugins ] || fail 'plugins were not installed first'
+[ "$(sed -n '2p' "$fake_event_log")" = "source-file $linked_config" ] || fail 'active tmux server was not reloaded after plugin installation'
 
 PATH=$fake_bin:$PATH FAKE_GIT_LOG=$fake_git_log "$installer" "$destination"
 [ "$(wc -l < "$fake_git_log" | tr -d ' ')" = 1 ] || fail 'valid checkout was cloned again'
@@ -75,6 +79,7 @@ PATH=$fake_bin:$PATH FAKE_GIT_LOG=$fake_git_log FAKE_TPM_LOG=$fake_tpm_log \
     TMUX_TPM_DIR="$destination" TMUX_CONFIG_FILE="$linked_config"
 [ "$(wc -l < "$fake_git_log" | tr -d ' ')" = 1 ] || fail 'make tmux-tpm cloned an existing TPM checkout again'
 [ "$(wc -l < "$fake_tpm_log" | tr -d ' ')" = 2 ] || fail 'existing TPM checkout did not check for missing plugins'
+[ "$(sed -n '4p' "$fake_event_log")" = "source-file $linked_config" ] || fail 'existing plugin installation did not reload tmux'
 
 PATH=$fake_bin:$PATH FAKE_GIT_LOG=$fake_git_log FAKE_TPM_LOG=$fake_tpm_log \
     FAKE_EVENT_LOG=$fake_event_log FAKE_TMUX_RUNNING=0 \

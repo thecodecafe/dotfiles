@@ -87,13 +87,14 @@ nvim-luarocks:
 
 tmux:
 	@"$(DOTFILE_MANAGER)" link "$(TMUX_CONFIG_SOURCE)" "$(TMUX_CONFIG_FILE)"
+	@if tmux list-sessions >/dev/null 2>&1; then tmux source-file "$(TMUX_CONFIG_FILE)"; fi
 	@printf '%s\n' 'Run make tmux-tpm to install missing tmux plugins.'
 
 tmux-tpm:
 	@"$(TMUX_TPM_INSTALLER)" "$(TMUX_TPM_DIR)"
-	@if tmux list-sessions >/dev/null 2>&1; then tmux source-file "$(TMUX_CONFIG_FILE)"; fi
 	@"$(TMUX_TPM_DIR)/bin/install_plugins"
-	@printf '%s\n' 'Reload tmux with Ctrl-b, then r.'
+	@if tmux list-sessions >/dev/null 2>&1; then tmux source-file "$(TMUX_CONFIG_FILE)"; fi
+	@printf '%s\n' 'Tmux plugins installed; active tmux configuration reloaded when a server was running.'
 
 key-repeat:
 	@"$(KEY_REPEAT_SCRIPT)"
