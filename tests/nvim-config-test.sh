@@ -447,6 +447,14 @@ printf '%s\n' \
     '  assert(vim.tbl_contains(lsp_plugins[2].dependencies, "neovim/nvim-lspconfig"))' \
     '  assert(vim.tbl_contains(lsp_plugins[2].dependencies, "b0o/SchemaStore.nvim"))' \
     '  assert(vim.tbl_contains(lsp_plugins[2].dependencies, "hrsh7th/cmp-nvim-lsp"))' \
+    '  local navigator = require("plugins.vim_tmux_navigator")' \
+    '  assert(navigator[1] == "christoomey/vim-tmux-navigator")' \
+    '  assert(vim.tbl_contains(navigator.cmd, "TmuxNavigateLeft"))' \
+    '  assert(vim.tbl_contains(navigator.cmd, "TmuxNavigateRight"))' \
+    '  assert(navigator.keys[1][1] == "<c-h>")' \
+    '  assert(navigator.keys[2][1] == "<c-j>")' \
+    '  assert(navigator.keys[3][1] == "<c-k>")' \
+    '  assert(navigator.keys[4][1] == "<c-l>")' \
     '  vim.g.lazy_test_loaded = true' \
     'end' \
     'return M' > "$test_root/data/nvim/lazy/lazy.nvim/lua/lazy/init.lua"
