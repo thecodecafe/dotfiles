@@ -11,6 +11,7 @@ This is a modular Neovim configuration bootstrapped from [lazy.nvim](https://git
 - Relative and absolute line numbers; `<leader>w` saves the current buffer; `jj` or `kk` exits insert mode.
 - Yanked text is briefly highlighted, while search highlighting is transient and clears after searching or leaving Normal mode.
 - Format-on-save for Go, JSON, Lua, and YAML when the matching formatter-capable LSP is attached.
+- The statusline shows both the current filename and its path relative to the nearest project root.
 - Neogit on `<leader>gg`, Diffview close on `<leader>dq`, and seamless tmux/editor navigation with `Ctrl-h/j/k/l/\`.
 - Text objects for the whole buffer (`yae`, `vae`) and indentation scopes (`yii`, `yai`, `vii`, `vai`). The matching scope-delete forms are `dii` and `dai`; `x` retains Neovim's default character-delete behavior.
 

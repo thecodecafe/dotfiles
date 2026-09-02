@@ -216,6 +216,18 @@ printf '%s\n' \
     '  assert(vim.deep_equal(statusline[1].opts.sections.lualine_a, { "mode" }))' \
     '  assert(vim.deep_equal(statusline[1].opts.sections.lualine_b, { "branch" }))' \
     '  assert(vim.tbl_contains(statusline[1].opts.sections.lualine_c, "filename"))' \
+    '  local statusline_config = require("config.statusline")' \
+    '  local original_buf_name = vim.api.nvim_buf_get_name' \
+    '  local original_root = vim.fs.root' \
+    '  vim.api.nvim_buf_get_name = function() return "/tmp/project/lua/plugins/statusline.lua" end' \
+    '  vim.fs.root = function() return "/tmp/project" end' \
+    '  assert(statusline_config.project_path() == "lua/plugins/statusline.lua")' \
+    '  vim.api.nvim_buf_get_name = function() return "" end' \
+    '  assert(statusline_config.project_path() == "")' \
+    '  vim.api.nvim_buf_get_name = function() return "/tmp/outside.lua" end' \
+    '  assert(statusline_config.project_path() == "/tmp/outside.lua")' \
+    '  vim.api.nvim_buf_get_name = original_buf_name' \
+    '  vim.fs.root = original_root' \
     '  assert(vim.tbl_contains(statusline[1].opts.sections.lualine_c, "diagnostics"))' \
     '  assert(type(statusline[1].opts.sections.lualine_x[1]) == "function")' \
     '  assert(statusline[1].opts.sections.lualine_x[1]() == "")' \

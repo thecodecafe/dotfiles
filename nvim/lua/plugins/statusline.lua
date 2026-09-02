@@ -1,3 +1,5 @@
+local statusline = require("config.statusline")
+
 local function selection_count()
   local mode = vim.fn.mode()
   if not mode:match("^[vV\22]") then
@@ -31,7 +33,7 @@ return {
       sections = {
         lualine_a = { "mode" },
         lualine_b = { "branch" },
-        lualine_c = { "filename", "diagnostics" },
+        lualine_c = { "filename", statusline.project_path, "diagnostics" },
         lualine_x = { selection_count, "filetype" },
         lualine_y = { "%S" },
         lualine_z = { location },
