@@ -46,6 +46,26 @@ printf '%s\n' \
     '  assert(oil.opts.keymaps.gR == "actions.refresh")' \
     '  assert(oil.keys[1][1] == "-")' \
     '  assert(oil.keys[1][2] == "<CMD>Oil<CR>")' \
+    '  local textobjects = require("plugins.textobjects")' \
+    '  assert(textobjects[1][1] == "nvim-treesitter/nvim-treesitter")' \
+    '  assert(textobjects[1].branch == "main")' \
+    '  assert(textobjects[1].build == ":TSUpdate")' \
+    '  local textobject_config = require("config.textobjects")' \
+    '  local expected_parsers = { "bash", "css", "go", "html", "javascript", "json", "lua", "markdown", "scss", "tsx", "typescript", "vim", "vimdoc", "yaml" }' \
+    '  assert(vim.deep_equal(textobject_config.treesitter_parsers, expected_parsers))' \
+    '  assert(textobjects[2][1] == "nvim-mini/mini.ai")' \
+    '  assert(textobjects[2].opts.custom_textobjects.e ~= nil)' \
+    '  assert(textobjects[2].opts.custom_textobjects.s == nil)' \
+    '  assert(textobjects[3][1] == "nvim-mini/mini.indentscope")' \
+    '  assert(textobjects[3].opts.mappings.object_scope == "ii")' \
+    '  assert(textobjects[3].opts.mappings.object_scope_with_border == "ai")' \
+    '  local whole_buffer = textobject_config.whole_buffer()' \
+    '  assert(whole_buffer.from.line == 1 and whole_buffer.from.col == 1)' \
+    '  assert(whole_buffer.to.line == vim.api.nvim_buf_line_count(0) and whole_buffer.vis_mode == "V")' \
+    '  assert(vim.fn.maparg("xii", "n") == "")' \
+    '  assert(vim.fn.maparg("xai", "n") == "")' \
+    '  assert(vim.fn.maparg("xis", "n") == "")' \
+    '  assert(vim.fn.maparg("xas", "n") == "")' \
     '  local neogit = require("plugins.neogit")' \
     '  assert(neogit[1][1] == "NeogitOrg/neogit")' \
     '  assert(neogit[1].cmd == "Neogit")' \
@@ -443,6 +463,7 @@ NVIM_LOG_FILE=$test_root/nvim.log \
 grep -Fq 'https://github.com/folke/lazy.nvim.git' "$lazy_config" || fail 'lazy.nvim repository URL is missing'
 grep -Fq '"--branch=stable"' "$lazy_config" || fail 'lazy.nvim stable branch is not pinned'
 grep -Fq '{ import = "plugins" }' "$lazy_config" || fail 'plugin import is missing'
+[ "$(grep -Fc 'require("nvim-treesitter").install(textobjects.treesitter_parsers)' "$config_directory/lua/plugins/textobjects.lua")" = 1 ] || fail 'automatic Treesitter parser installation is missing'
 [ "$(sed -n '1p' "$config_directory/lua/plugins/init.lua")" = 'return {}' ] || fail 'initial plugin specification is not empty'
 grep -Fq 'vim.o.background = "dark"' "$config_directory/lua/plugins/gruvbox.lua" || fail 'Gruvbox dark background is missing'
 grep -Fq 'vim.cmd.colorscheme("gruvbox")' "$config_directory/lua/plugins/gruvbox.lua" || fail 'Gruvbox colorscheme is not applied'

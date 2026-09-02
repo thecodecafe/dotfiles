@@ -12,6 +12,7 @@ This is a modular Neovim configuration bootstrapped from [lazy.nvim](https://git
 - Yanked text is briefly highlighted, while search highlighting is transient and clears after searching or leaving Normal mode.
 - Format-on-save for Go, JSON, Lua, and YAML when the matching formatter-capable LSP is attached.
 - Neogit on `<leader>gg`, Diffview close on `<leader>dq`, and seamless tmux/editor navigation with `Ctrl-h/j/k/l/\`.
+- Text objects for the whole buffer (`yae`, `vae`) and indentation scopes (`yii`, `yai`, `vii`, `vai`). The matching scope-delete forms are `dii` and `dai`; `x` retains Neovim's default character-delete behavior.
 
 ## Configured language servers
 
@@ -24,6 +25,7 @@ Mason is configured to manage `gopls`, `lua_ls`, `ts_ls`, `cssls`, `html`, `some
 - Neovim and Git. lazy.nvim clones itself into Neovim's data directory on first launch.
 - Go for `gopls` and Go formatting.
 - Network access on first launch for lazy.nvim and plugin downloads; Mason uses the network to install language servers.
+- Treesitter parsers for syntax-aware scopes are installed automatically on first use for the configured languages. The first launch may require network access, `curl`, `tar`, and a C compiler; use `:TSInstall <language>` for additional languages outside the default list.
 - Lua 5.1 and LuaRocks support for plugins that need Lua rocks. The repository can build an isolated environment with `make nvim-luarocks`; that installer requires `python3`, `cc`, `make`, Git, and a trusted CA bundle.
 
 ## Install
