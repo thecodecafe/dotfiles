@@ -8,7 +8,7 @@ This is a modular Neovim configuration bootstrapped from [lazy.nvim](https://git
 - Telescope project-file search (`ff`), open-buffer search (`fr`), and workspace-symbol search (`fs`).
 - Completion through nvim-cmp and LuaSnip.
 - LSP diagnostics, details popups, rename with `F2`, definition/reference navigation (`gd`), rich hover details (`gh`), and code actions (`<leader>.`).
-- Relative and absolute line numbers; `<leader>w` saves the current buffer; `jj` or `kk` exits insert mode.
+- Relative and absolute line numbers; `<leader>w` saves the current buffer, `<leader>bd` deletes the current buffer, and `<leader>q` quits Neovim safely; `jj` or `kk` exits insert mode.
 - Yanked text is briefly highlighted, while search highlighting is transient and clears after searching or leaving Normal mode.
 - Format-on-save for Go, JSON, Lua, and YAML when the matching formatter-capable LSP is attached.
 - The statusline shows both the current filename and its path relative to the nearest project root.

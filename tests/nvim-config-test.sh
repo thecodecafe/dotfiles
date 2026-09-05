@@ -103,6 +103,8 @@ printf '%s\n' \
     '  assert(feedback_events.TextYankPost and feedback_events.CmdlineEnter and feedback_events.CmdlineLeave and feedback_events.BufLeave and feedback_events.ModeChanged)' \
     '  assert(vim.o.timeoutlen == 300)' \
     '  assert(vim.fn.maparg("<leader>w", "n"):match("write"))' \
+    '  assert(vim.fn.maparg("<leader>bd", "n") == "<Cmd>bdelete<CR>")' \
+    '  assert(vim.fn.maparg("<leader>q", "n") == "<Cmd>q<CR>")' \
     '  assert(vim.fn.maparg("jj", "i") == "<Esc>")' \
     '  assert(vim.fn.maparg("kk", "i") == "<Esc>")' \
     '  assert(vim.fn.maparg("[d", "n") ~= "")' \
