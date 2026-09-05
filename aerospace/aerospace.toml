@@ -278,7 +278,10 @@ run = "move-node-to-workspace B"
 
 [[on-window-detected]]
 if.app-id = "org.pqrs.Karabiner-Elements.Settings"
-run = "move-node-to-workspace c"
+run = "move-node-to-workspace C"
 
+[[on-window-detected]]
+if.app-id = "com.apple.Notes"
+run = "move-node-to-workspace N"
 
 
