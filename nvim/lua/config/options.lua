@@ -6,6 +6,7 @@ vim.opt.cmdheight = 0
 vim.opt.showcmd = true
 vim.opt.showcmdloc = "statusline"
 vim.opt.showmode = false
+vim.opt.winbar = "%{%v:lua.require('config.statusline').project_path()%}"
 
 -- Keep search feedback transient: show the active match while searching, then
 -- clear it instead of leaving every match highlighted for the rest of the session.

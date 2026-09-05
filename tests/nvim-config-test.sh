@@ -94,6 +94,7 @@ printf '%s\n' \
     '  assert(vim.o.showcmd == true)' \
     '  assert(vim.o.showcmdloc == "statusline")' \
     '  assert(vim.o.showmode == false)' \
+    '  assert(vim.o.winbar == "%{%v:lua.require('"'"'config.statusline'"'"').project_path()%}")' \
     '  assert(vim.o.incsearch == true)' \
     '  assert(vim.o.hlsearch == false)' \
     '  local feedback_autocmds = vim.api.nvim_get_autocmds({ group = "nvim-editor-feedback" })' \
@@ -217,8 +218,9 @@ printf '%s\n' \
     '  assert(statusline[1].opts.options.globalstatus == true)' \
     '  assert(vim.deep_equal(statusline[1].opts.sections.lualine_a, { "mode" }))' \
     '  assert(vim.deep_equal(statusline[1].opts.sections.lualine_b, { "branch" }))' \
-    '  assert(vim.tbl_contains(statusline[1].opts.sections.lualine_c, "filename"))' \
     '  local statusline_config = require("config.statusline")' \
+    '  assert(vim.tbl_contains(statusline[1].opts.sections.lualine_c, "filename"))' \
+    '  assert(not vim.tbl_contains(statusline[1].opts.sections.lualine_c, statusline_config.project_path))' \
     '  local original_buf_name = vim.api.nvim_buf_get_name' \
     '  local original_root = vim.fs.root' \
     '  vim.api.nvim_buf_get_name = function() return "/tmp/project/lua/plugins/statusline.lua" end' \
