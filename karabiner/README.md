@@ -1,6 +1,6 @@
 # Karabiner Elements
 
-This module configures Karabiner Elements so Caps Lock acts as Escape when tapped and as a Hyper key when held. While Hyper is held, `h`, `j`, `k`, and `l` send the left, down, up, and right arrow keys in every macOS application.
+This module configures Karabiner Elements so Caps Lock acts as Escape when tapped, Control when held, and Hyper when double-tapped and held.
 
 ## Dependencies
 
@@ -10,9 +10,11 @@ This module configures Karabiner Elements so Caps Lock acts as Escape when tappe
 ## Key behavior
 
 - Tap `Caps Lock`: Escape.
-- Hold `Caps Lock`: `Control + Option + Command + Shift` (Hyper).
-- Hold Hyper and press `h/j/k/l`: Left/Down/Up/Right arrow.
+- Hold `Caps Lock`: left Control.
+- Double-tap and hold `Caps Lock`: `Control + Option + Command + Shift` (Hyper).
+- While Hyper is held, `h/j/k/l`: Left/Down/Up/Right arrow.
 - Tap-versus-hold timeout and held-down threshold: 150 ms.
+- Double-tap detection window: 300 ms.
 
 ## Install
 
