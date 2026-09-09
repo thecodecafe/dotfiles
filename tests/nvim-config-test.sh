@@ -239,6 +239,20 @@ printf '%s\n' \
     '  assert(vim.deep_equal(statusline[1].opts.sections.lualine_y, { "%S" }))' \
     '  assert(type(statusline[1].opts.sections.lualine_z[1]) == "function")' \
     '  assert(statusline[1].opts.sections.lualine_z[1]():match("^%d+/%d+:%d+$"))' \
+    '  local session = require("plugins.session")' \
+    '  assert(session[1][1] == "rmagatti/auto-session")' \
+    '  assert(session[1].lazy == false)' \
+    '  assert(session[1].opts.auto_save == false)' \
+    '  assert(session[1].opts.auto_restore == true)' \
+    '  assert(session[1].opts.auto_create == false)' \
+    '  assert(session[1].opts.auto_restore_last_session == false)' \
+    '  assert(session[1].opts.git_use_branch_name == true)' \
+    '  assert(session[1].opts.git_auto_restore_on_branch_change == true)' \
+    '  assert(session[1].opts.root_dir == vim.fn.expand("~/.nvim-sessions"))' \
+    '  assert(session[1].keys[1][1] == "<leader>ss")' \
+    '  assert(session[1].keys[1][2] == "<cmd>AutoSession save<cr>")' \
+    '  assert(session[1].keys[2][1] == "<leader>sd")' \
+    '  assert(session[1].keys[2][2] == "<cmd>AutoSession delete<cr>")' \
     '  local noice = require("plugins.noice")' \
     '  assert(noice[1][1] == "folke/noice.nvim")' \
     '  assert(noice[1].event == "VeryLazy")' \
@@ -510,6 +524,7 @@ grep -Fq '"plenary.nvim"' "$lazy_lock" || fail 'Plenary lockfile entry is missin
 grep -Fq '"nvim-web-devicons"' "$lazy_lock" || fail 'file icons lockfile entry is missing'
 grep -Fq '"noice.nvim"' "$lazy_lock" || fail 'Noice lockfile entry is missing'
 grep -Fq '"nui.nvim"' "$lazy_lock" || fail 'Nui lockfile entry is missing'
+grep -Fq '"auto-session"' "$lazy_lock" || fail 'Auto Session lockfile entry is missing'
 grep -Fq 'default_capabilities()' "$config_directory/lua/config/lsp.lua" || fail 'enhanced LSP completion capabilities are missing'
 grep -Fq '"<C-Space>"' "$config_directory/lua/plugins/completion.lua" || fail 'manual completion mapping is missing'
 grep -Fq '"<Tab>"' "$config_directory/lua/plugins/completion.lua" || fail 'next completion mapping is missing'
