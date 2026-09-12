@@ -9,6 +9,18 @@ vim.keymap.set("n", "<leader>bd", "<cmd>bdelete<cr>", {
   desc = "Delete current buffer",
 })
 
+vim.keymap.set("n", "<leader>bn", "<cmd>bnext<cr>", {
+  desc = "Next buffer",
+})
+
+vim.keymap.set("n", "<leader>bp", "<cmd>bprevious<cr>", {
+  desc = "Previous buffer",
+})
+
+vim.keymap.set("n", "<leader>bl", "<cmd>buffer #<cr>", {
+  desc = "Toggle last buffer",
+})
+
 vim.keymap.set("n", "<leader>q", "<cmd>q<cr>", {
   desc = "Quit Neovim",
 })

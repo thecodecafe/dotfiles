@@ -105,6 +105,9 @@ printf '%s\n' \
     '  assert(vim.o.timeoutlen == 300)' \
     '  assert(vim.fn.maparg("<leader>w", "n"):match("write"))' \
     '  assert(vim.fn.maparg("<leader>bd", "n") == "<Cmd>bdelete<CR>")' \
+    '  assert(vim.fn.maparg("<leader>bn", "n") == "<Cmd>bnext<CR>")' \
+    '  assert(vim.fn.maparg("<leader>bp", "n") == "<Cmd>bprevious<CR>")' \
+    '  assert(vim.fn.maparg("<leader>bl", "n") == "<Cmd>buffer #<CR>")' \
     '  assert(vim.fn.maparg("<leader>q", "n") == "<Cmd>q<CR>")' \
     '  assert(vim.fn.maparg("jj", "i") == "<Esc>")' \
     '  assert(vim.fn.maparg("kk", "i") == "<Esc>")' \
