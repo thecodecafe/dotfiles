@@ -263,6 +263,26 @@ printf '%s\n' \
     '  assert(noice[1].opts.messages.view_search == false)' \
     '  assert(noice[1].opts.presets.bottom_search == false)' \
     '  assert(noice[1].opts.presets.command_palette == true)' \
+    '  local code_action_plugin = require("plugins.code_action")' \
+    '  assert(code_action_plugin[1][1] == "rachartier/tiny-code-action.nvim")' \
+    '  assert(code_action_plugin[1].event == "LspAttach")' \
+    '  assert(code_action_plugin[1].opts.backend == "vim")' \
+    '  assert(code_action_plugin[1].opts.picker[1] == "buffer")' \
+    '  assert(code_action_plugin[1].opts.picker.opts.keymaps.select == "<CR>")' \
+    '  local code_action_config = require("config.code_action")' \
+    '  code_action_config.setup()' \
+    '  local code_action_autocmds = vim.api.nvim_get_autocmds({ group = "nvim-code-action-picker", event = "User" })' \
+    '  assert(#code_action_autocmds == 1 and code_action_autocmds[1].pattern == "TinyCodeActionWindowEnterMain")' \
+    '  local picker_buffer = vim.api.nvim_create_buf(false, true)' \
+    '  vim.api.nvim_buf_set_lines(picker_buffer, 0, -1, false, { "## ✂  Refactor", "  • Extract function" })' \
+    '  vim.api.nvim_exec_autocmds("User", { pattern = "TinyCodeActionWindowEnterMain", data = { buf = picker_buffer } })' \
+    '  local picker_lines = vim.api.nvim_buf_get_lines(picker_buffer, 0, -1, false)' \
+    '  assert(picker_lines[1] == "Refactor" and picker_lines[2] == "  • Extract function")' \
+    '  local picker_maps = vim.api.nvim_buf_get_keymap(picker_buffer, "n")' \
+    '  local picker_map_rhs = {}' \
+    '  for _, mapping in ipairs(picker_maps) do picker_map_rhs[mapping.lhs] = mapping.rhs end' \
+    '  assert(picker_map_rhs["<Tab>"] == "j" and picker_map_rhs["<S-Tab>"] == "k")' \
+    '  vim.api.nvim_buf_delete(picker_buffer, { force = true })' \
     '  local telescope_config = require("config.telescope")' \
     '  local original_root = vim.fs.root' \
     '  vim.fs.root = function(buffer, marker)' \
@@ -360,8 +380,7 @@ printf '%s\n' \
     '      return method == "textDocument/rename" or method == "textDocument/definition" or method == "textDocument/codeAction"' \
     '    end }' \
     '  end' \
-    '  local original_code_action = vim.lsp.buf.code_action' \
-    '  vim.lsp.buf.code_action = function() vim.g.lsp_code_action_called = true end' \
+    '  package.loaded["tiny-code-action"] = { code_action = function() vim.g.lsp_code_action_called = true end }' \
     '  lsp_config.attach_keymaps({ buf = 0, data = { client_id = 42 } })' \
     '  local rename_map = find_buffer_map("<F2>")' \
     '  assert(rename_map and type(rename_map.callback) == "function" and rename_map.desc == "Rename symbol")' \
@@ -382,7 +401,7 @@ printf '%s\n' \
     '  vim.keymap.del("n", " .", { buffer = 0 })' \
     '  vim.lsp.get_client_by_id = original_get_client_by_id' \
     '  vim.lsp.buf.rename = original_rename' \
-    '  vim.lsp.buf.code_action = original_code_action' \
+    '  package.loaded["tiny-code-action"] = nil' \
     '  navigation.goto_definition_or_references = original_goto' \
     '  navigation.preview_definition = original_preview' \
     '  local nav_original_get_clients = vim.lsp.get_clients' \

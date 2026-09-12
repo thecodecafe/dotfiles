@@ -1,5 +1,6 @@
 local M = {}
 local navigation = require("config.lsp_navigation")
+local code_action = require("config.code_action")
 
 M.servers = {
   "gopls",
@@ -43,7 +44,7 @@ function M.attach_keymaps(event)
   end
 
   if client:supports_method("textDocument/codeAction") then
-    vim.keymap.set("n", "<leader>.", vim.lsp.buf.code_action, {
+    vim.keymap.set("n", "<leader>.", code_action.open, {
       buffer = event.buf,
       desc = "LSP code actions",
     })
