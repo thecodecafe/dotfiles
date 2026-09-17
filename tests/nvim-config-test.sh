@@ -589,7 +589,22 @@ grep -Fq '"nvim-web-devicons"' "$lazy_lock" || fail 'file icons lockfile entry i
 grep -Fq '"noice.nvim"' "$lazy_lock" || fail 'Noice lockfile entry is missing'
 grep -Fq '"nui.nvim"' "$lazy_lock" || fail 'Nui lockfile entry is missing'
 grep -Fq '"auto-session"' "$lazy_lock" || fail 'Auto Session lockfile entry is missing'
+grep -Fq 'jidn/vim-dbml' "$config_directory/lua/plugins/dbml.lua" || fail 'DBML syntax plugin is missing'
+if grep -Fq 'image.nvim' "$lazy_lock"; then fail 'removed DBML image plugin remains in the lockfile'; fi
+if grep -R -Fq 'DBMLPreview' "$config_directory/lua"; then fail 'DBML preview command remains configured'; fi
+if grep -Fq 'softwaretechnik/dbml-renderer' "$config_directory/README.md"; then fail 'DBML preview dependency remains documented'; fi
+grep -Fq 'tree-sitter-cli' "$config_directory/README.md" || fail 'tree-sitter CLI dependency is missing'
+grep -Fq 'brew install tree-sitter-cli' "$config_directory/README.md" || fail 'tree-sitter CLI installation command is missing'
+grep -Fq 'tree-sitter-cli-macos-x64.zip' "$config_directory/README.md" || fail 'Intel macOS Tree-sitter binary guidance is missing'
+grep -Fq 'official Tree-sitter releases' "$config_directory/README.md" || fail 'Tree-sitter release link is missing'
+grep -Fq 'xattr -d com.apple.quarantine' "$config_directory/README.md" || fail 'macOS quarantine guidance is missing'
+grep -Fq 'tree-sitter --version' "$config_directory/README.md" || fail 'Tree-sitter verification command is missing'
+grep -Fq 'brew install pgformatter' "$config_directory/README.md" || fail 'pgFormatter installation command is missing'
+grep -Fq 'postgres_lsp' "$config_directory/README.md" || fail 'Postgres language server documentation is missing'
+grep -Fq ':TSUpdate' "$config_directory/README.md" || fail 'Treesitter update step is missing'
 grep -Fq 'default_capabilities()' "$config_directory/lua/config/lsp.lua" || fail 'enhanced LSP completion capabilities are missing'
+grep -Fq 'vim.lsp.config("postgres_lsp"' "$config_directory/lua/config/lsp.lua" || fail 'Postgres language server configuration is missing'
+grep -Fq 'workspace_required = false' "$config_directory/lua/config/lsp.lua" || fail 'Postgres language server should attach without a project configuration file'
 grep -Fq '"<C-Space>"' "$config_directory/lua/plugins/completion.lua" || fail 'manual completion mapping is missing'
 grep -Fq '"<Tab>"' "$config_directory/lua/plugins/completion.lua" || fail 'next completion mapping is missing'
 grep -Fq '"<S-Tab>"' "$config_directory/lua/plugins/completion.lua" || fail 'previous completion mapping is missing'
