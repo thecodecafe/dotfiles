@@ -5,16 +5,18 @@ This module configures Karabiner Elements so Caps Lock acts as Escape when tappe
 ## Dependencies
 
 - [Karabiner Elements](https://karabiner-elements.pqrs.org/) installed on macOS.
+- Karabiner-Elements 15.3.7 or later, for conditions on delayed key events.
 - A macOS user account allowed to grant Karabiner its required Input Monitoring permissions.
 
 ## Key behavior
 
-- Tap `Caps Lock`: Escape.
+- Tap `Caps Lock` and wait 150 ms without pressing another key: Escape.
+- If another key is pressed within that 150 ms window, the pending Escape is canceled. This allows a second `Caps Lock` tap to enter Hyper, but a quick single-tap Escape followed by another key will not send Escape.
 - Hold `Caps Lock`: left Control.
 - Double-tap and hold `Caps Lock`: `Control + Option + Command + Shift` (Hyper).
 - While Hyper is held, `h/j/k/l`: Left/Down/Up/Right arrow.
 - Tap-versus-hold timeout and held-down threshold: 150 ms.
-- Double-tap detection window: 300 ms.
+- Double-tap detection and delayed Escape window: 150 ms.
 
 ## Install
 
