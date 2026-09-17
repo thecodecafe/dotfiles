@@ -18,7 +18,7 @@ This is a modular Neovim configuration bootstrapped from [lazy.nvim](https://git
 
 ## Configured language servers
 
-Mason is configured to manage `gopls`, `lua_ls`, `ts_ls`, `cssls`, `html`, `somesass_ls`, `jsonls`, and `yamlls`. This covers Go, Lua, TypeScript/JavaScript/TSX/JSX, CSS/SCSS/Sass, HTML, JSON, YAML, and related project files supported by those servers.
+Mason is configured to manage `gopls`, `lua_ls`, `ts_ls`, `cssls`, `html`, `somesass_ls`, `jsonls`, `yamlls`, and `postgres_lsp`. This covers Go, Lua, TypeScript/JavaScript/TSX/JSX, CSS/SCSS/Sass, HTML, JSON, YAML, PostgreSQL SQL, and related project files supported by those servers.
 
 `gopls` is enabled only when the `go` executable is available. JSON and YAML schemas come from SchemaStore.nvim.
 
@@ -26,6 +26,7 @@ Mason is configured to manage `gopls`, `lua_ls`, `ts_ls`, `cssls`, `html`, `some
 
 - Neovim and Git. lazy.nvim clones itself into Neovim's data directory on first launch.
 - Go for `gopls` and Go formatting.
+- PostgreSQL SQL language support is installed by Mason. Without a project database connection, the Postgres Language Server provides basic linting; schema-aware completion and type checking require project-specific connection settings. SQL format-on-save requires pgFormatter: install it on macOS with `brew install pgformatter` (the executable is `pg_format`). Comments are retained, though formatting may adjust their placement or layout.
 - Network access on first launch for lazy.nvim and plugin downloads; Mason uses the network to install language servers.
 - Treesitter parsers for syntax-aware scopes are installed automatically on first use for the configured languages. The first launch may require network access, `curl`, `tar`, and a C compiler; use `:TSInstall <language>` for additional languages outside the default list.
 - Lua 5.1 and LuaRocks support for plugins that need Lua rocks. The repository can build an isolated environment with `make nvim-luarocks`; that installer requires `python3`, `cc`, `make`, Git, and a trusted CA bundle.

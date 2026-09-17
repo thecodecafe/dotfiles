@@ -526,7 +526,7 @@ printf '%s\n' \
     '  vim.lsp.buf.hover = nav_original_hover' \
     '  vim.notify = nav_original_notify' \
     '  telescope_config.references = nav_original_references' \
-    '  local expected_servers = { "gopls", "lua_ls", "ts_ls", "cssls", "html", "somesass_ls", "jsonls", "yamlls" }' \
+    '  local expected_servers = { "gopls", "lua_ls", "ts_ls", "cssls", "html", "somesass_ls", "jsonls", "yamlls", "postgres_lsp" }' \
     '  assert(vim.deep_equal(lsp_config.servers, expected_servers))' \
     '  local lsp_plugins = require("plugins.lsp")' \
     '  assert(lsp_plugins[1][1] == "mason-org/mason.nvim")' \

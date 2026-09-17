@@ -11,6 +11,7 @@ M.servers = {
   "somesass_ls",
   "jsonls",
   "yamlls",
+  "postgres_lsp",
 }
 
 function M.ensure_installed()
@@ -115,6 +116,13 @@ function M.setup(mason_lspconfig_opts)
         hover = true,
       },
     },
+  })
+
+  vim.lsp.config("postgres_lsp", {
+    cmd = { "postgres-language-server", "lsp-proxy" },
+    filetypes = { "sql" },
+    root_markers = { "postgres-language-server.jsonc", ".git" },
+    workspace_required = false,
   })
 
   require("mason-lspconfig").setup(mason_lspconfig_opts)
