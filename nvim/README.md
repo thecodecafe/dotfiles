@@ -7,10 +7,11 @@ This is a modular Neovim configuration bootstrapped from [lazy.nvim](https://git
 - Dark Gruvbox with soft contrast, Oil file browsing, and a Lualine statusline.
 - Telescope project-file search (`ff`), open-buffer search (`fr`), and workspace-symbol search (`fs`).
 - Completion through nvim-cmp and LuaSnip.
+- DBML filetype detection and syntax highlighting.
 - LSP diagnostics, details popups, rename with `F2`, definition/reference navigation (`gd`), rich hover details (`gh`), and floating code actions (`<leader>.`) navigated with `Tab` / `Shift-Tab` and confirmed with `Enter`.
 - Relative and absolute line numbers; `<leader>w` saves the current buffer, `<leader>bd` deletes the current buffer, and `<leader>q` quits Neovim safely; `jj` or `kk` exits insert mode.
 - Yanked text is briefly highlighted, while search highlighting is transient and clears after searching or leaving Normal mode.
-- Format-on-save for Go, JSON, Lua, and YAML when the matching formatter-capable LSP is attached.
+- Format-on-save for Go, JSON, Lua, and YAML when the matching formatter-capable LSP is attached; PostgreSQL SQL uses pgFormatter, and DBML uses conservative indentation.
 - The top winbar shows the current buffer's path relative to the nearest project root, while lualine shows the shorter filename in its bottom statusline.
 - Neogit on `<leader>gg`, Diffview close on `<leader>dq`, and seamless tmux/editor navigation with `Ctrl-h/j/k/l/\`.
 - Text objects for the whole buffer (`yae`, `vae`) and indentation scopes (`yii`, `yai`, `vii`, `vai`). The matching scope-delete forms are `dii` and `dai`; `x` retains Neovim's default character-delete behavior.

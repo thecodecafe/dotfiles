@@ -109,6 +109,12 @@ printf '%s\n' \
     '  assert(vim.fn.maparg("<leader>bp", "n") == "<Cmd>bprevious<CR>")' \
     '  assert(vim.fn.maparg("<leader>bl", "n") == "<Cmd>buffer #<CR>")' \
     '  assert(vim.fn.maparg("<leader>q", "n") == "<Cmd>q<CR>")' \
+    '  vim.cmd("setfiletype dbml")' \
+    '  assert(vim.bo.filetype == "dbml")' \
+    '  assert(vim.fn.maparg("<leader>dp", "n") == "")' \
+    '  vim.cmd("enew")' \
+    '  vim.cmd("setfiletype text")' \
+    '  assert(vim.fn.maparg("<leader>dp", "n") == "")' \
     '  assert(vim.fn.maparg("jj", "i") == "<Esc>")' \
     '  assert(vim.fn.maparg("kk", "i") == "<Esc>")' \
     '  assert(vim.fn.maparg("[d", "n") ~= "")' \
@@ -172,6 +178,16 @@ printf '%s\n' \
     '  vim.diagnostic.reset(diagnostic_namespace, 0)' \
     '  local formatting = require("config.formatting")' \
     '  assert(vim.deep_equal(formatting.formatters, { go = "gopls", json = "jsonls", lua = "lua_ls", yaml = "yamlls" }))' \
+    '  assert(formatting.sql_formatter == "pg_format", "SQL formatter executable is incorrect")' \
+    '  local dbml_input = { "Table users as U {", "// keep this comment {", "id int [pk]", "note varchar [note: `keep }`]", "indexes {", "(id) [pk]", "}", "}", "Ref: U.id > U.id" }' \
+    '  local dbml_output = formatting.format_dbml(dbml_input)' \
+    '  assert(dbml_output[2] == "  // keep this comment {")' \
+    '  assert(dbml_output[3] == "  id int [pk]")' \
+    '  assert(dbml_output[5] == "  indexes {")' \
+    '  assert(dbml_output[6] == "    (id) [pk]")' \
+    '  assert(dbml_output[9] == "Ref: U.id > U.id")' \
+    '  local invalid_output, invalid_error = formatting.format_dbml({ "Table users {", "id int" })' \
+    '  assert(invalid_output == nil and invalid_error == "unclosed DBML structure")' \
     '  local format_autocmds = vim.api.nvim_get_autocmds({ group = "nvim-format-on-save", event = "BufWritePre" })' \
     '  assert(#format_autocmds == 1)' \
     '  local original_get_clients = vim.lsp.get_clients' \
@@ -201,6 +217,32 @@ printf '%s\n' \
     '  end' \
     '  formatting.format_buffer(0)' \
     '  assert(vim.g.format_warning_shown == true)' \
+    '  local original_system = vim.system' \
+    '  local original_executable = vim.fn.executable' \
+    '  vim.bo.filetype = "sql"' \
+    '  vim.api.nvim_buf_set_lines(0, 0, -1, false, { "select 1;", "-- keep this comment" })' \
+    '  vim.g.formatter_result = { code = 0, stdout = "SELECT 1;\n-- keep this comment\n", stderr = "" }' \
+    '  vim.system = function(command, opts)' \
+    '    assert(vim.deep_equal(command, { "pg_format", "-" }))' \
+    '    assert(opts.stdin:match("select 1;") and opts.stdin:match("%-%- keep this comment"))' \
+    '    return { wait = function() return vim.g.formatter_result end }' \
+    '  end' \
+    '  vim.fn.executable = function(name) assert(name == "pg_format"); return 1 end' \
+    '  formatting.format_buffer(0)' \
+    '  assert(vim.deep_equal(vim.api.nvim_buf_get_lines(0, 0, -1, false), { "SELECT 1;", "-- keep this comment" }), "SQL formatting did not retain comment text")' \
+    '  vim.api.nvim_buf_set_lines(0, 0, -1, false, { "select 1;", "-- keep this comment" })' \
+    '  vim.g.formatter_result = { code = 1, stdout = "", stderr = "formatter failed" }' \
+    '  vim.notify = function(message, level) assert(message:match("formatter failed") and level == vim.log.levels.WARN); vim.g.format_warning_shown = true end' \
+    '  formatting.format_buffer(0)' \
+    '  assert(vim.api.nvim_buf_get_lines(0, 0, -1, false)[1] == "select 1;", "failed SQL formatter changed the buffer")' \
+    '  vim.fn.executable = function() return 0 end' \
+    '  vim.notify = function(message, level) assert(message:match("brew install pgformatter") and level == vim.log.levels.WARN); vim.g.missing_formatter_warning_shown = true end' \
+    '  formatting.format_buffer(0)' \
+    '  assert(vim.api.nvim_buf_get_lines(0, 0, -1, false)[2] == "-- keep this comment", "missing SQL formatter changed the buffer")' \
+    '  assert(vim.g.missing_formatter_warning_shown == true)' \
+    '  vim.system = original_system' \
+    '  vim.fn.executable = original_executable' \
+    '  vim.bo.modified = false' \
     '  vim.lsp.get_clients = original_get_clients' \
     '  vim.lsp.buf.format = original_format' \
     '  vim.notify = original_notify' \
