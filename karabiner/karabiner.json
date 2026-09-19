@@ -9,7 +9,7 @@
 				"parameters": {
 					"basic.to_if_alone_timeout_milliseconds": 150,
 					"basic.to_if_held_down_threshold_milliseconds": 150,
-					"basic.to_delayed_action_delay_milliseconds": 150
+					"basic.to_delayed_action_delay_milliseconds": 300
 				},
 				"rules": [
 					{
@@ -55,21 +55,15 @@
 									{"key_code": "left_control"}
 								],
 								"to_if_alone": [
-									{"set_variable": {"name": "caps_lock_tap_pending", "value": 1}}
+									{
+										"key_code": "escape"
+									}
 								],
 								"to_delayed_action": {
 									"to_if_invoked": [
-										{
-											"key_code": "escape",
-											"conditions": [
-												{"name": "caps_lock_tap_pending", "type": "variable_if", "value": 1}
-											]
-										},
-										{"set_variable": {"name": "caps_lock_tap_pending", "value": 0}},
 										{"set_variable": {"name": "caps_lock_first_tap", "value": 0}}
 									],
 									"to_if_canceled": [
-										{"set_variable": {"name": "caps_lock_tap_pending", "value": 0}},
 										{"set_variable": {"name": "caps_lock_first_tap", "value": 0}}
 									]
 								},

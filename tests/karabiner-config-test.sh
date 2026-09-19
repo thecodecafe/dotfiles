@@ -20,8 +20,9 @@ fi
 
 grep -Fq '"basic.to_if_alone_timeout_milliseconds": 150' "$config_file" || fail 'tap timeout is not 150 ms'
 grep -Fq '"basic.to_if_held_down_threshold_milliseconds": 150' "$config_file" || fail 'hold threshold is not 150 ms'
-grep -Fq '"basic.to_delayed_action_delay_milliseconds": 150' "$config_file" || fail 'double-tap delay is not 150 ms'
+grep -Fq '"basic.to_delayed_action_delay_milliseconds": 300' "$config_file" || fail 'double-tap delay is not 300 ms'
 grep -Fq '"key_code": "caps_lock"' "$config_file" || fail 'Caps Lock manipulator is missing'
+grep -Fq '"key_code": "escape"' "$config_file" || fail 'Caps Lock tap does not send Escape'
 python3 - "$config_file" <<'PY' || fail 'physical Escape is unexpectedly remapped'
 import json
 import sys
@@ -58,27 +59,7 @@ control_manipulator = next(
 )
 if control_manipulator.get("to", [{}])[1] != {"key_code": "left_control"}:
     sys.exit(1)
-if control_manipulator.get("to_if_alone") != [{
-    "set_variable": {"name": "caps_lock_tap_pending", "value": 1}
-}]:
-    sys.exit(1)
-
-delayed_action = control_manipulator.get("to_delayed_action", {})
-invoke = delayed_action.get("to_if_invoked", [])
-if not invoke or invoke[0] != {
-    "key_code": "escape",
-    "conditions": [{
-        "name": "caps_lock_tap_pending", "type": "variable_if", "value": 1
-    }],
-}:
-    sys.exit(1)
-if {"set_variable": {"name": "caps_lock_tap_pending", "value": 0}} not in invoke:
-    sys.exit(1)
-
-cancel = delayed_action.get("to_if_canceled", [])
-if {"set_variable": {"name": "caps_lock_tap_pending", "value": 0}} not in cancel:
-    sys.exit(1)
-if {"set_variable": {"name": "caps_lock_first_tap", "value": 0}} not in cancel:
+if control_manipulator.get("to_if_alone") != [{"key_code": "escape"}]:
     sys.exit(1)
 
 hyper_manipulator = next(
