@@ -8,6 +8,14 @@ vim.opt.showcmdloc = "statusline"
 vim.opt.showmode = false
 vim.opt.winbar = "%{%v:lua.require('config.statusline').project_path()%}"
 
+vim.filetype.add({
+  filename = {
+    config = "genericconfig",
+  },
+})
+
+vim.cmd("syntax enable")
+
 -- Keep search feedback transient: show the active match while searching, then
 -- clear it instead of leaving every match highlighted for the rest of the session.
 vim.opt.incsearch = true

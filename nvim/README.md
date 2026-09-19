@@ -7,6 +7,7 @@ This is a modular Neovim configuration bootstrapped from [lazy.nvim](https://git
 - Gruvbox, Kanagawa Dragon, darker Rosé Pine Main, and Catppuccin Mocha themes; Oil file browsing and a colorscheme-aware Lualine statusline.
 - Telescope project-file search (`ff`), open-buffer search (`fr`), and workspace-symbol search (`fs`).
 - Completion through nvim-cmp and LuaSnip.
+- Generic syntax highlighting for extensionless files named `config`, covering common key/value entries, values, and `#` / `;` comment lines.
 - DBML filetype detection and syntax highlighting.
 - LSP diagnostics, details popups, rename with `F2`, definition/reference navigation (`gd`), rich hover details (`gh`), and floating code actions (`<leader>.`) navigated with `Tab` / `Shift-Tab` and confirmed with `Enter`.
 - Relative and absolute line numbers; `<leader>w` saves the current buffer, `<leader>bd` deletes the current buffer, and `<leader>q` asks for confirmation before quitting (unsaved changes still trigger Neovim's normal warning); `jj` or `kk` exits insert mode.

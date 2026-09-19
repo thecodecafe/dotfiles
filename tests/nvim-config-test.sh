@@ -115,6 +115,28 @@ printf '%s\n' \
     '  assert(vim.o.showcmdloc == "statusline")' \
     '  assert(vim.o.showmode == false)' \
     '  assert(vim.o.winbar == "%{%v:lua.require('"'"'config.statusline'"'"').project_path()%}")' \
+    '  assert(vim.filetype.match({ filename = "/tmp/some-app/config" }) == "genericconfig")' \
+    '  assert(vim.filetype.match({ filename = "/tmp/unrelated/config" }) == "genericconfig")' \
+    '  assert(vim.filetype.match({ filename = "/tmp/unrelated/config.ini" }) ~= "genericconfig")' \
+    '  assert(vim.g.syntax_on == 1)' \
+    '  local syntax_buf = vim.api.nvim_create_buf(true, false)' \
+    '  vim.api.nvim_set_current_buf(syntax_buf)' \
+    '  vim.api.nvim_buf_set_name(syntax_buf, "/tmp/unrelated/config")' \
+    '  vim.api.nvim_buf_set_lines(syntax_buf, 0, -1, false, { "# comment", "font-family = \"Example Font\"", "enabled = true", "port = 42", "mode: production" })' \
+    '  vim.bo[syntax_buf].modified = false' \
+    '  vim.api.nvim_buf_call(syntax_buf, function() vim.bo.filetype = "genericconfig"; vim.cmd("syntax sync fromstart") end)' \
+    '  local function syntax_group(line, col)' \
+    '    return vim.fn.synIDattr(vim.fn.synID(line, col, 1), "name")' \
+    '  end' \
+    '  assert(syntax_group(1, 1) == "GenericConfigComment", syntax_group(1, 1))' \
+    '  assert(syntax_group(2, 1) == "GenericConfigKey", syntax_group(2, 1))' \
+    '  assert(syntax_group(2, 13) == "GenericConfigSeparator", syntax_group(2, 13))' \
+    '  assert(syntax_group(2, 15) == "GenericConfigString", syntax_group(2, 15))' \
+    '  assert(syntax_group(3, 12) == "GenericConfigBoolean", syntax_group(3, 12))' \
+    '  assert(syntax_group(4, 8) == "GenericConfigNumber", syntax_group(4, 8))' \
+    '  assert(syntax_group(5, 1) == "GenericConfigKey", syntax_group(5, 1))' \
+    '  assert(syntax_group(5, 5) == "GenericConfigSeparator", syntax_group(5, 5))' \
+    '  assert(syntax_group(5, 7) == "GenericConfigValue", syntax_group(5, 7))' \
     '  assert(vim.o.incsearch == true)' \
     '  assert(vim.o.hlsearch == false)' \
     '  local feedback_autocmds = vim.api.nvim_get_autocmds({ group = "nvim-editor-feedback" })' \
