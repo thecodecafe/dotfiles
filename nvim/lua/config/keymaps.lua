@@ -21,8 +21,12 @@ vim.keymap.set("n", "<leader>bl", "<cmd>buffer #<cr>", {
   desc = "Toggle last buffer",
 })
 
-vim.keymap.set("n", "<leader>q", "<cmd>q<cr>", {
-  desc = "Quit Neovim",
+vim.keymap.set("n", "<leader>q", function()
+  if vim.fn.confirm("Quit Neovim?", "&Yes\n&No", 2) == 1 then
+    vim.cmd("q")
+  end
+end, {
+  desc = "Confirm before quitting Neovim",
 })
 
 vim.keymap.set("i", "jj", "<esc>", { desc = "Exit insert mode" })

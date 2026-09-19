@@ -128,7 +128,20 @@ printf '%s\n' \
     '  assert(vim.fn.maparg("<leader>bn", "n") == "<Cmd>bnext<CR>")' \
     '  assert(vim.fn.maparg("<leader>bp", "n") == "<Cmd>bprevious<CR>")' \
     '  assert(vim.fn.maparg("<leader>bl", "n") == "<Cmd>buffer #<CR>")' \
-    '  assert(vim.fn.maparg("<leader>q", "n") == "<Cmd>q<CR>")' \
+    '  local quit_mapping = vim.fn.maparg("<leader>q", "n", false, true)' \
+    '  assert(type(quit_mapping.callback) == "function")' \
+    '  assert(quit_mapping.desc == "Confirm before quitting Neovim")' \
+    '  local original_confirm, original_cmd = vim.fn.confirm, vim.cmd' \
+    '  local confirmation, quit_command' \
+    '  vim.fn.confirm = function(prompt, choices, default)' \
+    '    assert(prompt == "Quit Neovim?" and choices == "&Yes\n&No" and default == 2)' \
+    '    return confirmation' \
+    '  end' \
+    '  vim.cmd = function(command) quit_command = command end' \
+    '  confirmation = 2; quit_mapping.callback(); assert(quit_command == nil)' \
+    '  confirmation = 0; quit_mapping.callback(); assert(quit_command == nil)' \
+    '  confirmation = 1; quit_mapping.callback(); assert(quit_command == "q")' \
+    '  vim.fn.confirm, vim.cmd = original_confirm, original_cmd' \
     '  vim.cmd("setfiletype dbml")' \
     '  assert(vim.bo.filetype == "dbml")' \
     '  assert(vim.fn.maparg("<leader>dp", "n") == "")' \
