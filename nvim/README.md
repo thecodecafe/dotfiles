@@ -4,7 +4,7 @@ This is a modular Neovim configuration bootstrapped from [lazy.nvim](https://git
 
 ## Features
 
-- Dark Gruvbox with soft contrast, Oil file browsing, and a Lualine statusline.
+- Gruvbox, Kanagawa Dragon, darker Rosé Pine Main, and Catppuccin Mocha themes; Oil file browsing and a colorscheme-aware Lualine statusline.
 - Telescope project-file search (`ff`), open-buffer search (`fr`), and workspace-symbol search (`fs`).
 - Completion through nvim-cmp and LuaSnip.
 - DBML filetype detection and syntax highlighting.
@@ -37,6 +37,8 @@ Mason is configured to manage `gopls`, `lua_ls`, `ts_ls`, `cssls`, `html`, `some
 make nvim
 make nvim-luarocks   # optional but recommended when using Lua-rock-dependent plugins
 ```
+
+Choose the Neovim theme by changing `active` in `lua/config/theme.lua` to `gruvbox`, `kanagawa`, `rose-pine`, or `catppuccin`, then restart Neovim. These select Gruvbox, Kanagawa Dragon, Rosé Pine Main (the darker Rosé Pine variant), and Catppuccin Mocha respectively. Lazy.nvim installs the theme plugins on launch.
 
 `make nvim` links this directory to `~/.config/nvim` (or `$XDG_CONFIG_HOME/nvim`) and reports if the LuaRocks environment is missing. If a real configuration directory exists, linking asks for confirmation and backs it up beside the destination before replacing it. Unrelated symlinks are never replaced. It does not clone the Neovim source repository. Remove only the repository-owned link with `make unlink-nvim`.
 

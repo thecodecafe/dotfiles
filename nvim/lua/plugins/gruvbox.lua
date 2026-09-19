@@ -1,14 +1,19 @@
 return {
-  "ellisonleao/gruvbox.nvim",
-  lazy = false,
-  priority = 1000,
-  opts = {
-    -- Use Gruvbox's softer, lower-contrast palette.
-    contrast = "soft",
-  },
-  config = function(_, opts)
-    vim.o.background = "dark"
-    require("gruvbox").setup(opts)
-    vim.cmd.colorscheme("gruvbox")
-  end,
+	"ellisonleao/gruvbox.nvim",
+	lazy = false,
+	priority = 1000,
+	dependencies = {
+		"rebelot/kanagawa.nvim",
+		{ "rose-pine/neovim", name = "rose-pine" },
+		{ "catppuccin/nvim", name = "catppuccin" },
+	},
+	opts = {
+		-- Use Gruvbox's softer, lower-contrast palette.
+		contrast = "hard",
+	},
+	config = function(_, opts)
+		vim.o.background = "dark"
+		require("gruvbox").setup(opts)
+		require("config.theme").apply()
+	end,
 }

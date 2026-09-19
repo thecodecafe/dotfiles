@@ -35,8 +35,28 @@ printf '%s\n' \
     '  assert(gruvbox[1] == "ellisonleao/gruvbox.nvim")' \
     '  assert(gruvbox.lazy == false)' \
     '  assert(gruvbox.priority == 1000)' \
-    '  assert(gruvbox.opts.contrast == "soft")' \
+    '  assert(gruvbox.opts.contrast == "hard")' \
+    '  assert(vim.tbl_contains(gruvbox.dependencies, "rebelot/kanagawa.nvim"))' \
+    '  assert(gruvbox.dependencies[2][1] == "rose-pine/neovim")' \
+    '  assert(gruvbox.dependencies[3][1] == "catppuccin/nvim")' \
     '  assert(type(gruvbox.config) == "function")' \
+    '  local theme = require("config.theme")' \
+    '  assert(theme.colorschemes[theme.active] ~= nil)' \
+    '  local expected_themes = { gruvbox = "gruvbox", kanagawa = "kanagawa-dragon", ["rose-pine"] = "rose-pine-main", catppuccin = "catppuccin-mocha" }' \
+    '  local original_colorscheme = vim.cmd.colorscheme' \
+    '  local original_catppuccin = package.loaded.catppuccin' \
+    '  package.loaded.catppuccin = { setup = function(opts) vim.g.catppuccin_test_flavour = opts.flavour end }' \
+    '  vim.cmd.colorscheme = function(name) vim.g.test_colorscheme = name end' \
+    '  for name, expected in pairs(expected_themes) do theme.apply(name); assert(vim.g.test_colorscheme == expected) end' \
+    '  assert(vim.g.catppuccin_test_flavour == "mocha")' \
+    '  vim.cmd.colorscheme = original_colorscheme' \
+    '  package.loaded.catppuccin = original_catppuccin' \
+    '  local kanagawa = require("plugins.kanagawa")' \
+    '  assert(kanagawa[1] == "rebelot/kanagawa.nvim" and kanagawa.lazy == false)' \
+    '  local rose_pine = require("plugins.rose_pine")' \
+    '  assert(rose_pine[1] == "rose-pine/neovim" and rose_pine.name == "rose-pine" and rose_pine.lazy == false)' \
+    '  local catppuccin = require("plugins.catppuccin")' \
+    '  assert(catppuccin[1] == "catppuccin/nvim" and catppuccin.name == "catppuccin" and catppuccin.lazy == false)' \
     '  local oil = require("plugins.oil")' \
     '  assert(oil[1] == "stevearc/oil.nvim")' \
     '  assert(oil.lazy == false)' \
@@ -259,7 +279,7 @@ printf '%s\n' \
     '  assert(statusline[1].lazy == false)' \
     '  assert(statusline[1].priority == 900)' \
     '  assert(vim.tbl_contains(statusline[1].dependencies, "nvim-tree/nvim-web-devicons"))' \
-    '  assert(statusline[1].opts.options.theme == "gruvbox")' \
+    '  assert(statusline[1].opts.options.theme == "auto")' \
     '  assert(statusline[1].opts.options.globalstatus == true)' \
     '  assert(vim.deep_equal(statusline[1].opts.sections.lualine_a, { "mode" }))' \
     '  assert(vim.deep_equal(statusline[1].opts.sections.lualine_b, { "branch" }))' \
@@ -568,7 +588,8 @@ grep -Fq '{ import = "plugins" }' "$lazy_config" || fail 'plugin import is missi
 [ "$(grep -Fc 'require("nvim-treesitter").install(textobjects.treesitter_parsers)' "$config_directory/lua/plugins/textobjects.lua")" = 1 ] || fail 'automatic Treesitter parser installation is missing'
 [ "$(sed -n '1p' "$config_directory/lua/plugins/init.lua")" = 'return {}' ] || fail 'initial plugin specification is not empty'
 grep -Fq 'vim.o.background = "dark"' "$config_directory/lua/plugins/gruvbox.lua" || fail 'Gruvbox dark background is missing'
-grep -Fq 'vim.cmd.colorscheme("gruvbox")' "$config_directory/lua/plugins/gruvbox.lua" || fail 'Gruvbox colorscheme is not applied'
+grep -Fq 'require("config.theme").apply()' "$config_directory/lua/plugins/gruvbox.lua" || fail 'configured colorscheme selection is not applied'
+grep -Fq 'active = "' "$config_directory/lua/config/theme.lua" || fail 'active theme selection is missing'
 grep -Fq '"gruvbox.nvim"' "$lazy_lock" || fail 'Gruvbox lockfile entry is missing'
 grep -Fq '"oil.nvim"' "$lazy_lock" || fail 'Oil lockfile entry is missing'
 grep -Fq '"neogit"' "$lazy_lock" || fail 'Neogit lockfile entry is missing'
