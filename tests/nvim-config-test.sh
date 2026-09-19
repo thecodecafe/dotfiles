@@ -662,6 +662,7 @@ printf '%s\n' \
     '  local lsp_plugins = require("plugins.lsp")' \
     '  assert(lsp_plugins[1][1] == "mason-org/mason.nvim")' \
     '  assert(lsp_plugins[1].cmd == "Mason")' \
+    '  assert(next(lsp_plugins[1].opts) == nil)' \
     '  assert(lsp_plugins[2][1] == "mason-org/mason-lspconfig.nvim")' \
     '  assert(lsp_plugins[2].event == "VeryLazy")' \
     '  local expected_installs = vim.tbl_filter(function(server)' \
