@@ -1,0 +1,25 @@
+;; Caps Lock: tap Escape, hold Control, double-tap and hold Hyper.
+;; Hyper+H/J/K/L sends the arrow keys.
+
+(defcfg
+  process-unmapped-keys yes
+  concurrent-tap-hold yes
+)
+
+(defsrc caps h j k l)
+
+(defalias
+  hyper (multi (layer-while-held hyper) lctl lalt lmet lsft)
+  caps (tap-dance 300 (
+    (tap-hold-press 150 150 esc lctl)
+    (tap-hold-press 150 150 esc @hyper)
+  ))
+)
+
+(deflayer base
+  @caps h j k l
+)
+
+(deflayer hyper
+  _ left down up right
+)

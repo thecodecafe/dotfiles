@@ -5,6 +5,10 @@ SKILLS_SOURCE := $(REPO_ROOT)/skills
 SKILLS_MANAGER := $(REPO_ROOT)/scripts/manage-skill-links.sh
 DOTFILE_MANAGER := $(REPO_ROOT)/scripts/manage-dotfile-link.sh
 GHOSTTY_MANAGER := $(REPO_ROOT)/scripts/manage-ghostty-link.sh
+KANATA_SERVICE := $(REPO_ROOT)/scripts/kanata-service.sh
+KEYBOARD_REMAPPER := $(REPO_ROOT)/scripts/switch-keyboard-remapper.sh
+KARABINER_CORE_SERVICE := $(REPO_ROOT)/scripts/karabiner-core-service.sh
+KARABINER_REFRESH := $(REPO_ROOT)/scripts/refresh-karabiner.sh
 NVIM_MANAGER := $(REPO_ROOT)/scripts/manage-nvim-link.sh
 NVIM_LUAROCKS_INSTALLER := $(REPO_ROOT)/scripts/install-nvim-luarocks.sh
 TMUX_TPM_INSTALLER := $(REPO_ROOT)/scripts/install-tmux-tpm.sh
@@ -25,7 +29,7 @@ TMUX_TPM_DIR ?= $(HOME)/.tmux/plugins/tpm
 AEROSPACE_CONFIG_FILE ?= $(HOME)/.config/aerospace/aerospace.toml
 KARABINER_CONFIG_FILE ?= $(HOME)/.config/karabiner/karabiner.json
 
-.PHONY: help all codex claude opencode ghostty aerospace karabiner nvim nvim-luarocks tmux tmux-tpm key-repeat reset-key-repeat unlink-all unlink-codex unlink-claude unlink-opencode unlink-ghostty unlink-aerospace unlink-karabiner unlink-nvim unlink-tmux test
+.PHONY: help all codex claude opencode ghostty aerospace karabiner nvim nvim-luarocks tmux tmux-tpm key-repeat reset-key-repeat kanata-service-install kanata-service-uninstall kanata-start kanata-stop kanata-restart kanata-status keyboard-kanata keyboard-karabiner karabiner-refresh karabiner-core-start karabiner-core-stop karabiner-core-status unlink-all unlink-codex unlink-claude unlink-opencode unlink-ghostty unlink-aerospace unlink-karabiner unlink-nvim unlink-tmux test
 
 help:
 	@printf '%s\n' \
@@ -36,6 +40,13 @@ help:
 		'  make ghostty        Link the Ghostty configuration' \
 		'  make aerospace      Link the AeroSpace configuration' \
 		'  make karabiner      Link the Karabiner Elements configuration' \
+		'  make kanata-service-install Install the disabled Kanata LaunchDaemon' \
+		'  make kanata-service-uninstall Remove the Kanata LaunchDaemon' \
+		'  make keyboard-kanata Switch to Kanata (disable Karabiner)' \
+		'  make keyboard-karabiner Switch to Karabiner (stop Kanata)' \
+		'  make kanata-start|stop|restart|status Manage the Kanata service' \
+		'  make karabiner-refresh Reload the Karabiner configuration' \
+		'  make karabiner-core-start|stop|status Manage Karabiner Core Service' \
 		'  make nvim           Link the Neovim configuration' \
 		'  make nvim-luarocks  Install Neovim Lua 5.1 and LuaRocks' \
 		'  make tmux           Link the tmux configuration' \
@@ -75,6 +86,42 @@ aerospace:
 
 karabiner:
 	@"$(DOTFILE_MANAGER)" link "$(KARABINER_CONFIG_SOURCE)" "$(KARABINER_CONFIG_FILE)"
+
+kanata-service-install:
+	@"$(KANATA_SERVICE)" install
+
+kanata-service-uninstall:
+	@"$(KANATA_SERVICE)" uninstall
+
+kanata-start:
+	@"$(KANATA_SERVICE)" start
+
+kanata-stop:
+	@"$(KANATA_SERVICE)" stop
+
+kanata-restart:
+	@"$(KANATA_SERVICE)" restart
+
+kanata-status:
+	@"$(KANATA_SERVICE)" status
+
+keyboard-kanata:
+	@"$(KEYBOARD_REMAPPER)" kanata
+
+keyboard-karabiner:
+	@"$(KEYBOARD_REMAPPER)" karabiner
+
+karabiner-refresh:
+	@"$(KARABINER_REFRESH)" reload
+
+karabiner-core-start:
+	@"$(KARABINER_CORE_SERVICE)" start
+
+karabiner-core-stop:
+	@"$(KARABINER_CORE_SERVICE)" stop
+
+karabiner-core-status:
+	@"$(KARABINER_CORE_SERVICE)" status
 
 nvim:
 	@"$(NVIM_MANAGER)" link "$(NVIM_CONFIG_DIR)"
@@ -129,6 +176,8 @@ unlink-tmux:
 	@"$(DOTFILE_MANAGER)" unlink "$(TMUX_CONFIG_SOURCE)" "$(TMUX_CONFIG_FILE)"
 
 test:
+	@"$(REPO_ROOT)/tests/kanata-config-test.sh"
+	@"$(REPO_ROOT)/tests/keyboard-remapper-scripts-test.sh"
 	@"$(REPO_ROOT)/tests/manage-skill-links-test.sh"
 	@"$(REPO_ROOT)/tests/manage-dotfile-link-test.sh"
 	@"$(REPO_ROOT)/tests/manage-ghostty-link-test.sh"
