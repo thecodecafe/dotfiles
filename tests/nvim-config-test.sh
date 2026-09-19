@@ -39,24 +39,69 @@ printf '%s\n' \
     '  assert(vim.tbl_contains(gruvbox.dependencies, "rebelot/kanagawa.nvim"))' \
     '  assert(gruvbox.dependencies[2][1] == "rose-pine/neovim")' \
     '  assert(gruvbox.dependencies[3][1] == "catppuccin/nvim")' \
+    '  assert(vim.tbl_contains(gruvbox.dependencies, "ydkulks/cursor-dark.nvim"))' \
+    '  assert(vim.tbl_contains(gruvbox.dependencies, "tiesen243/vercel.nvim"))' \
     '  assert(type(gruvbox.config) == "function")' \
     '  local theme = require("config.theme")' \
     '  assert(theme.colorschemes[theme.active] ~= nil)' \
-    '  local expected_themes = { gruvbox = "gruvbox", kanagawa = "kanagawa-dragon", ["rose-pine"] = "rose-pine-main", catppuccin = "catppuccin-mocha" }' \
+    '  local expected_themes = { gruvbox = "gruvbox", kanagawa = "kanagawa-dragon", ["rose-pine"] = "rose-pine-main", catppuccin = "catppuccin-mocha", ["cursor-dark"] = "cursor-dark", vercel = "vercel" }' \
     '  local original_colorscheme = vim.cmd.colorscheme' \
+    '  local original_highlight = vim.cmd.highlight' \
+    '  local original_get_hl, original_set_hl = vim.api.nvim_get_hl, vim.api.nvim_set_hl' \
     '  local original_catppuccin = package.loaded.catppuccin' \
+    '  local original_cursor_dark, original_vercel = package.loaded["cursor-dark"], package.loaded.vercel' \
     '  package.loaded.catppuccin = { setup = function(opts) vim.g.catppuccin_test_flavour = opts.flavour end }' \
+    '  package.loaded["cursor-dark"] = { setup = function(opts) vim.g.cursor_dark_test_style = opts.style end }' \
+    '  package.loaded.vercel = { setup = function(opts) vim.g.vercel_test_theme = opts.theme end }' \
     '  vim.cmd.colorscheme = function(name) vim.g.test_colorscheme = name end' \
-    '  for name, expected in pairs(expected_themes) do theme.apply(name); assert(vim.g.test_colorscheme == expected) end' \
+    '  local background_overrides = {}' \
+    '  vim.cmd.highlight = function(spec) table.insert(background_overrides, spec) end' \
+    '  local highlight_groups = {' \
+    '    Normal = { fg = 0xD8DEE9, bg = 0x111111 },' \
+    '    WinBar = { fg = 0x000000, bg = 0x222222, bold = true },' \
+    '    WinBarNC = { fg = 0x000000, bg = 0x333333, italic = true },' \
+    '  }' \
+    '  local set_highlight_calls = {}' \
+    '  vim.api.nvim_get_hl = function(_, opts) return vim.deepcopy(highlight_groups[opts.name]) end' \
+    '  vim.api.nvim_set_hl = function(_, name, highlights)' \
+    '    highlight_groups[name] = vim.deepcopy(highlights)' \
+    '    table.insert(set_highlight_calls, name)' \
+    '  end' \
+    '  for name, expected in pairs(expected_themes) do' \
+    '    local previous_override_count = #background_overrides' \
+    '    local previous_set_highlight_count = #set_highlight_calls' \
+    '    theme.apply(name)' \
+    '    assert(vim.g.test_colorscheme == expected)' \
+    '    if name == "cursor-dark" then' \
+    '      assert(#background_overrides == previous_override_count + 2)' \
+    '      assert(background_overrides[#background_overrides - 1] == "Normal guibg=#000000")' \
+    '      assert(background_overrides[#background_overrides] == "NormalNC guibg=#000000")' \
+    '      assert(#set_highlight_calls == previous_set_highlight_count + 2)' \
+    '      assert(set_highlight_calls[#set_highlight_calls - 1] == "WinBar" and set_highlight_calls[#set_highlight_calls] == "WinBarNC")' \
+    '      assert(highlight_groups.WinBar.fg == highlight_groups.Normal.fg and highlight_groups.WinBar.bg == "#000000" and highlight_groups.WinBar.bold)' \
+    '      assert(highlight_groups.WinBarNC.fg == highlight_groups.Normal.fg and highlight_groups.WinBarNC.bg == "#000000" and highlight_groups.WinBarNC.italic)' \
+    '    else' \
+    '      assert(#background_overrides == previous_override_count)' \
+    '      assert(#set_highlight_calls == previous_set_highlight_count)' \
+    '    end' \
+    '  end' \
     '  assert(vim.g.catppuccin_test_flavour == "mocha")' \
-    '  vim.cmd.colorscheme = original_colorscheme' \
+    '  assert(vim.g.cursor_dark_test_style == "dark" and vim.g.vercel_test_theme == "dark")' \
     '  package.loaded.catppuccin = original_catppuccin' \
+    '  package.loaded["cursor-dark"], package.loaded.vercel = original_cursor_dark, original_vercel' \
+    '  vim.cmd.highlight = original_highlight' \
+    '  vim.api.nvim_get_hl, vim.api.nvim_set_hl = original_get_hl, original_set_hl' \
+    '  assert(#theme.choices == 6 and theme.choices[1].label == "Gruvbox" and theme.choices[2].label == "Kanagawa Dragon" and theme.choices[3].label == "Rosé Pine Main" and theme.choices[4].label == "Catppuccin Mocha" and theme.choices[5].label == "Cursor Dark" and theme.choices[6].label == "Vercel Dark")' \
     '  local kanagawa = require("plugins.kanagawa")' \
     '  assert(kanagawa[1] == "rebelot/kanagawa.nvim" and kanagawa.lazy == false)' \
     '  local rose_pine = require("plugins.rose_pine")' \
     '  assert(rose_pine[1] == "rose-pine/neovim" and rose_pine.name == "rose-pine" and rose_pine.lazy == false)' \
     '  local catppuccin = require("plugins.catppuccin")' \
     '  assert(catppuccin[1] == "catppuccin/nvim" and catppuccin.name == "catppuccin" and catppuccin.lazy == false)' \
+    '  local cursor_dark = require("plugins.cursor_dark")' \
+    '  assert(cursor_dark[1] == "ydkulks/cursor-dark.nvim" and cursor_dark.lazy == false)' \
+    '  local vercel = require("plugins.vercel")' \
+    '  assert(vercel[1] == "tiesen243/vercel.nvim" and vercel.lazy == false)' \
     '  local oil = require("plugins.oil")' \
     '  assert(oil[1] == "stevearc/oil.nvim")' \
     '  assert(oil.lazy == false)' \
@@ -415,6 +460,34 @@ printf '%s\n' \
     '  vim.lsp.get_clients = function() return { {} } end' \
     '  telescope_config.workspace_symbols()' \
     '  assert(vim.g.symbol_picker_opened == true)' \
+    '  local picker_spec, picker_results, selected_entry, select_action, closed_picker' \
+    '  package.loaded["telescope.pickers"] = { new = function(_, spec)' \
+    '    assert(spec.prompt_title == "Select colorscheme" and spec.sorter == "theme-sorter")' \
+    '    picker_spec = spec' \
+    '    assert(spec.attach_mappings(42, function() end) == true)' \
+    '    return { find = function() vim.g.theme_picker_opened = true end }' \
+    '  end }' \
+    '  package.loaded["telescope.finders"] = { new_table = function(opts)' \
+    '    picker_results = opts.results' \
+    '    for index, label in ipairs({ "Gruvbox", "Kanagawa Dragon", "Rosé Pine Main", "Catppuccin Mocha", "Cursor Dark", "Vercel Dark" }) do' \
+    '      local entry = opts.entry_maker(opts.results[index])' \
+    '      assert(entry.display == label and entry.ordinal == label and entry.value == opts.results[index].name)' \
+    '    end' \
+    '    return { results = opts.results }' \
+    '  end }' \
+    '  package.loaded["telescope.config"] = { values = { generic_sorter = function(opts) assert(next(opts) == nil); return "theme-sorter" end } }' \
+    '  package.loaded["telescope.actions"] = { select_default = { replace = function(_, action) select_action = action end }, close = function(prompt_bufnr) closed_picker = prompt_bufnr end }' \
+    '  package.loaded["telescope.actions.state"] = { get_selected_entry = function() return selected_entry end }' \
+    '  telescope_config.themes()' \
+    '  assert(vim.g.theme_picker_opened == true and #picker_results == 6)' \
+    '  selected_entry = { value = "rose-pine" }; select_action(); assert(vim.g.test_colorscheme == "rose-pine-main" and closed_picker == 42)' \
+    '  local selected_colorscheme = vim.g.test_colorscheme; selected_entry = nil; select_action(); assert(vim.g.test_colorscheme == selected_colorscheme)' \
+    '  vim.cmd.colorscheme = original_colorscheme' \
+    '  package.loaded["telescope.pickers"] = nil' \
+    '  package.loaded["telescope.finders"] = nil' \
+    '  package.loaded["telescope.config"] = nil' \
+    '  package.loaded["telescope.actions"] = nil' \
+    '  package.loaded["telescope.actions.state"] = nil' \
     '  local next_action = function() end' \
     '  local previous_action = function() end' \
     '  package.loaded["telescope.actions"] = {' \
@@ -449,6 +522,9 @@ printf '%s\n' \
     '  assert(telescope[1].keys[2][2] == telescope_config.buffers)' \
     '  assert(telescope[1].keys[3][1] == "fs")' \
     '  assert(telescope[1].keys[3][2] == telescope_config.workspace_symbols)' \
+    '  assert(telescope[1].keys[4][1] == "<leader>t")' \
+    '  assert(telescope[1].keys[4][2] == telescope_config.themes)' \
+    '  assert(telescope[1].keys[4].desc == "Select colorscheme")' \
     '  local lsp_config = require("config.lsp")' \
     '  lsp_config.setup_keymaps()' \
     '  local lsp_attach_autocmds = vim.api.nvim_get_autocmds({ group = "nvim-lsp-keymaps", event = "LspAttach" })' \

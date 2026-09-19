@@ -48,4 +48,38 @@ function M.references()
   })
 end
 
+function M.themes()
+  local theme = require("config.theme")
+  local actions = require("telescope.actions")
+  local action_state = require("telescope.actions.state")
+  local pickers = require("telescope.pickers")
+  local finders = require("telescope.finders")
+  local sorter = require("telescope.config").values
+
+  pickers.new({}, {
+    prompt_title = "Select colorscheme",
+    finder = finders.new_table({
+      results = theme.choices,
+      entry_maker = function(choice)
+        return {
+          value = choice.name,
+          display = choice.label,
+          ordinal = choice.label,
+        }
+      end,
+    }),
+    sorter = sorter.generic_sorter({}),
+    attach_mappings = function(prompt_bufnr)
+      actions.select_default:replace(function()
+        local selection = action_state.get_selected_entry()
+        actions.close(prompt_bufnr)
+        if selection then
+          theme.apply(selection.value)
+        end
+      end)
+      return true
+    end,
+  }):find()
+end
+
 return M

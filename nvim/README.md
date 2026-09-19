@@ -39,7 +39,7 @@ make nvim
 make nvim-luarocks   # optional but recommended when using Lua-rock-dependent plugins
 ```
 
-Choose the Neovim theme by changing `active` in `lua/config/theme.lua` to `gruvbox`, `kanagawa`, `rose-pine`, or `catppuccin`, then restart Neovim. These select Gruvbox, Kanagawa Dragon, Rosé Pine Main (the darker Rosé Pine variant), and Catppuccin Mocha respectively. Lazy.nvim installs the theme plugins on launch.
+Press `<leader>t` in Normal mode to open the Telescope theme picker and apply Gruvbox, Kanagawa Dragon, Rosé Pine Main (the darker Rosé Pine variant), Catppuccin Mocha, Cursor Dark, or Vercel Dark (Next.js ecosystem style) immediately. The choice lasts for the current Neovim session; to change the startup theme, set `active` in `lua/config/theme.lua`. Lazy.nvim installs the theme plugins on launch.
 
 `make nvim` links this directory to `~/.config/nvim` (or `$XDG_CONFIG_HOME/nvim`) and reports if the LuaRocks environment is missing. If a real configuration directory exists, linking asks for confirmation and backs it up beside the destination before replacing it. Unrelated symlinks are never replaced. It does not clone the Neovim source repository. Remove only the repository-owned link with `make unlink-nvim`.
 

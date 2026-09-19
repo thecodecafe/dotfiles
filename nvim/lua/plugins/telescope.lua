@@ -12,6 +12,7 @@ return {
       { "ff", telescope.find_files, desc = "Find project files" },
       { "fr", telescope.buffers, desc = "Find open buffers" },
       { "fs", telescope.workspace_symbols, desc = "Find project symbols" },
+      { "<leader>t", telescope.themes, desc = "Select colorscheme" },
     },
     opts = {},
   },
