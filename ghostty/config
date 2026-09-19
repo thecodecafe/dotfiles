@@ -6,12 +6,12 @@ background-opacity = 1
 window-padding-x = 0
 window-padding-y = 0
 
-background = #202124
+background = #000000
 foreground = #E8EAED
 
 cursor-color = #E8EAED
-cursor-text = #202124
+cursor-text = #000000
 
 selection-background = #E8EAED
-selection-foreground = #E8EAED
+selection-foreground = #000000
 
