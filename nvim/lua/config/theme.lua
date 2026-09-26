@@ -7,6 +7,7 @@ local M = {
 		catppuccin = "catppuccin-mocha",
 		["cursor-dark"] = "cursor-dark",
 		vercel = "vercel",
+		terminal = "terminal-theme",
 	},
 }
 
@@ -17,6 +18,7 @@ M.choices = {
 	{ name = "catppuccin", label = "Catppuccin Mocha" },
 	{ name = "cursor-dark", label = "Cursor Dark" },
 	{ name = "vercel", label = "Vercel Dark" },
+	{ name = "terminal", label = "Terminal Theme" },
 }
 
 function M.apply(name)

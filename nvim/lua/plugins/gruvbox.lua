@@ -8,6 +8,7 @@ return {
 		{ "catppuccin/nvim", name = "catppuccin" },
 		"ydkulks/cursor-dark.nvim",
 		"tiesen243/vercel.nvim",
+		"thecodecafe/terminal-theme.nvim",
 	},
 	opts = {
 		-- Use Gruvbox's softer, lower-contrast palette.
