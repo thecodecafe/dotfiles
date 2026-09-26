@@ -111,6 +111,7 @@ printf '%s\n' \
     '  assert(oil.opts.default_file_explorer == true)' \
     '  assert(oil.opts.keymaps["<C-h>"] == false)' \
     '  assert(oil.opts.keymaps["<C-l>"] == false)' \
+    '  assert(oil.opts.keymaps["<Esc>"] == "actions.close")' \
     '  assert(oil.opts.keymaps.gR == "actions.refresh")' \
     '  assert(oil.keys[1][1] == "-")' \
     '  assert(oil.keys[1][2] == "<CMD>Oil<CR>")' \
