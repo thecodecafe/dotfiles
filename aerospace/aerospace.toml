@@ -284,4 +284,3 @@ run = "move-node-to-workspace C"
 if.app-id = "com.apple.Notes"
 run = "move-node-to-workspace N"
 
-
