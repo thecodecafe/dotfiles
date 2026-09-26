@@ -6,6 +6,7 @@ return {
     keymaps = {
       ["<C-h>"] = false,
       ["<C-l>"] = false,
+      ["<Esc>"] = "actions.close",
       ["gR"] = "actions.refresh",
     },
   },
