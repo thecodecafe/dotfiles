@@ -41,10 +41,11 @@ printf '%s\n' \
     '  assert(gruvbox.dependencies[3][1] == "catppuccin/nvim")' \
     '  assert(vim.tbl_contains(gruvbox.dependencies, "ydkulks/cursor-dark.nvim"))' \
     '  assert(vim.tbl_contains(gruvbox.dependencies, "tiesen243/vercel.nvim"))' \
+    '  assert(vim.tbl_contains(gruvbox.dependencies, "thecodecafe/terminal-theme.nvim"))' \
     '  assert(type(gruvbox.config) == "function")' \
     '  local theme = require("config.theme")' \
     '  assert(theme.colorschemes[theme.active] ~= nil)' \
-    '  local expected_themes = { gruvbox = "gruvbox", kanagawa = "kanagawa-dragon", ["rose-pine"] = "rose-pine-main", catppuccin = "catppuccin-mocha", ["cursor-dark"] = "cursor-dark", vercel = "vercel" }' \
+    '  local expected_themes = { gruvbox = "gruvbox", kanagawa = "kanagawa-dragon", ["rose-pine"] = "rose-pine-main", catppuccin = "catppuccin-mocha", ["cursor-dark"] = "cursor-dark", vercel = "vercel", terminal = "terminal-theme" }' \
     '  local original_colorscheme = vim.cmd.colorscheme' \
     '  local original_highlight = vim.cmd.highlight' \
     '  local original_get_hl, original_set_hl = vim.api.nvim_get_hl, vim.api.nvim_set_hl' \
@@ -91,7 +92,7 @@ printf '%s\n' \
     '  package.loaded["cursor-dark"], package.loaded.vercel = original_cursor_dark, original_vercel' \
     '  vim.cmd.highlight = original_highlight' \
     '  vim.api.nvim_get_hl, vim.api.nvim_set_hl = original_get_hl, original_set_hl' \
-    '  assert(#theme.choices == 6 and theme.choices[1].label == "Gruvbox" and theme.choices[2].label == "Kanagawa Dragon" and theme.choices[3].label == "Rosé Pine Main" and theme.choices[4].label == "Catppuccin Mocha" and theme.choices[5].label == "Cursor Dark" and theme.choices[6].label == "Vercel Dark")' \
+    '  assert(#theme.choices == 7 and theme.choices[1].label == "Gruvbox" and theme.choices[2].label == "Kanagawa Dragon" and theme.choices[3].label == "Rosé Pine Main" and theme.choices[4].label == "Catppuccin Mocha" and theme.choices[5].label == "Cursor Dark" and theme.choices[6].label == "Vercel Dark" and theme.choices[7].label == "Terminal Theme")' \
     '  local kanagawa = require("plugins.kanagawa")' \
     '  assert(kanagawa[1] == "rebelot/kanagawa.nvim" and kanagawa.lazy == false)' \
     '  local rose_pine = require("plugins.rose_pine")' \
@@ -102,6 +103,8 @@ printf '%s\n' \
     '  assert(cursor_dark[1] == "ydkulks/cursor-dark.nvim" and cursor_dark.lazy == false)' \
     '  local vercel = require("plugins.vercel")' \
     '  assert(vercel[1] == "tiesen243/vercel.nvim" and vercel.lazy == false)' \
+    '  local terminal_theme = require("plugins.terminal_theme")' \
+    '  assert(terminal_theme[1] == "thecodecafe/terminal-theme.nvim" and terminal_theme.lazy == false)' \
     '  local oil = require("plugins.oil")' \
     '  assert(oil[1] == "stevearc/oil.nvim")' \
     '  assert(oil.lazy == false)' \
@@ -469,7 +472,7 @@ printf '%s\n' \
     '  end }' \
     '  package.loaded["telescope.finders"] = { new_table = function(opts)' \
     '    picker_results = opts.results' \
-    '    for index, label in ipairs({ "Gruvbox", "Kanagawa Dragon", "Rosé Pine Main", "Catppuccin Mocha", "Cursor Dark", "Vercel Dark" }) do' \
+    '    for index, label in ipairs({ "Gruvbox", "Kanagawa Dragon", "Rosé Pine Main", "Catppuccin Mocha", "Cursor Dark", "Vercel Dark", "Terminal Theme" }) do' \
     '      local entry = opts.entry_maker(opts.results[index])' \
     '      assert(entry.display == label and entry.ordinal == label and entry.value == opts.results[index].name)' \
     '    end' \
@@ -479,7 +482,7 @@ printf '%s\n' \
     '  package.loaded["telescope.actions"] = { select_default = { replace = function(_, action) select_action = action end }, close = function(prompt_bufnr) closed_picker = prompt_bufnr end }' \
     '  package.loaded["telescope.actions.state"] = { get_selected_entry = function() return selected_entry end }' \
     '  telescope_config.themes()' \
-    '  assert(vim.g.theme_picker_opened == true and #picker_results == 6)' \
+    '  assert(vim.g.theme_picker_opened == true and #picker_results == 7)' \
     '  selected_entry = { value = "rose-pine" }; select_action(); assert(vim.g.test_colorscheme == "rose-pine-main" and closed_picker == 42)' \
     '  local selected_colorscheme = vim.g.test_colorscheme; selected_entry = nil; select_action(); assert(vim.g.test_colorscheme == selected_colorscheme)' \
     '  vim.cmd.colorscheme = original_colorscheme' \
