@@ -9,9 +9,5 @@ window-padding-y = 0
 background = #000000
 foreground = #E8EAED
 
-cursor-color = #E8EAED
-cursor-text = #000000
-
-selection-background = #E8EAED
-selection-foreground = #000000
-
+cursor-color = #FE8010
+selection-background = #FE8019
