@@ -159,6 +159,7 @@ printf '%s\n' \
     '  assert(vim.o.number == true)' \
     '  assert(vim.o.relativenumber == true)' \
     '  assert(vim.o.signcolumn == "yes")' \
+    '  assert(vim.o.termguicolors == true)' \
     '  assert(vim.o.cmdheight == 0)' \
     '  assert(vim.o.showcmd == true)' \
     '  assert(vim.o.showcmdloc == "statusline")' \
