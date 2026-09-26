@@ -1,6 +1,7 @@
 vim.opt.number = true
 vim.opt.relativenumber = true
 vim.opt.signcolumn = "yes"
+vim.opt.termguicolors = true
 
 vim.opt.cmdheight = 0
 vim.opt.showcmd = true
