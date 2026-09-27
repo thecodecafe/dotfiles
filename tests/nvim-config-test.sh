@@ -112,9 +112,106 @@ printf '%s\n' \
     '  assert(oil.opts.keymaps["<C-h>"] == false)' \
     '  assert(oil.opts.keymaps["<C-l>"] == false)' \
     '  assert(oil.opts.keymaps["<Esc>"] == "actions.close")' \
-    '  assert(oil.opts.keymaps.gR == "actions.refresh")' \
+    '  assert(type(oil.opts.keymaps.gR) == "function")' \
+    '  assert(type(oil.opts.keymaps["<leader>r"]) == "function")' \
+    '  assert(oil.dependencies[1][1] == "JezerM/oil-lsp-diagnostics.nvim")' \
+    '  assert(oil.dependencies[1].branch == "master")' \
+    '  assert(oil.dependencies[1].opts.parent_dirs == true)' \
+    '  assert(type(oil.config) == "function")' \
     '  assert(oil.keys[1][1] == "-")' \
     '  assert(oil.keys[1][2] == "<CMD>Oil<CR>")' \
+    '  local oil_diagnostics = require("config.oil_diagnostics")' \
+    '  local oil_scope = vim.env.NVIM_CONFIG_TEST_ROOT .. "/oil-scope"' \
+    '  vim.fn.mkdir(oil_scope .. "/child/deeper", "p")' \
+    '  vim.fn.writefile({ "package main" }, oil_scope .. "/top.go")' \
+    '  vim.fn.writefile({ "package child" }, oil_scope .. "/child/child.go")' \
+    '  vim.fn.writefile({ "package deep" }, oil_scope .. "/child/deeper/deep.go")' \
+    '  vim.fn.writefile({ "package hidden" }, oil_scope .. "/.hidden.go")' \
+    '  local oil_test_buf = vim.api.nvim_create_buf(false, true)' \
+    '  local oil_entries = {' \
+    '    { name = "top.go", type = "file" },' \
+    '    { name = "child", type = "directory" },' \
+    '    { name = ".hidden.go", type = "file" },' \
+    '    { name = "..", type = "directory" },' \
+    '  }' \
+    '  vim.api.nvim_buf_set_lines(oil_test_buf, 0, -1, false, { "top.go", "child/", ".hidden.go", "../" })' \
+    '  local original_oil, original_oil_clients = package.loaded.oil, vim.lsp.get_clients' \
+    '  package.loaded.oil = {' \
+    '    get_current_dir = function() return oil_scope end,' \
+    '    get_entry_on_line = function(_, line) return oil_entries[line] end,' \
+    '  }' \
+    '  vim.lsp.get_clients = function()' \
+    '    return { { id = 998, root_dir = oil_scope, config = { root_dir = oil_scope, filetypes = { "go" } }, is_stopped = function() return false end } }' \
+    '  end' \
+    '  local oil_paths, oil_directory = oil_diagnostics.collect_paths(oil_test_buf)' \
+    '  assert(oil_directory == vim.fs.normalize(oil_scope))' \
+    '  assert(#oil_paths == 2 and oil_paths[1].path == vim.fs.normalize(oil_scope .. "/top.go"))' \
+    '  assert(oil_paths[2].path == vim.fs.normalize(oil_scope .. "/child/child.go"))' \
+    '  vim.fn.writefile({ "ignored.go" }, oil_scope .. "/.gitignore")' \
+    '  vim.fn.writefile({ "package ignored" }, oil_scope .. "/ignored.go")' \
+    '  vim.fn.system({ "git", "-C", oil_scope, "init", "-q" })' \
+    '  local ignore_check_done, ignored_paths = false, nil' \
+    '  oil_diagnostics.filter_ignored(oil_scope, { { path = oil_scope .. "/ignored.go" } }, function(ignored)' \
+    '    ignored_paths, ignore_check_done = ignored, true' \
+    '  end)' \
+    '  assert(vim.wait(3000, function() return ignore_check_done end))' \
+    '  assert(ignored_paths[vim.fs.normalize(oil_scope .. "/ignored.go")] == true)' \
+    '  local scan_a, scan_b = oil_scope .. "/scan-a", oil_scope .. "/scan-b"' \
+    '  vim.fn.mkdir(scan_a, "p")' \
+    '  vim.fn.mkdir(scan_b, "p")' \
+    '  vim.fn.writefile({ "package a" }, scan_a .. "/a.go")' \
+    '  vim.fn.writefile({ "package b" }, scan_b .. "/b.go")' \
+    '  local oil_buf_a = vim.api.nvim_create_buf(false, true)' \
+    '  local oil_buf_b = vim.api.nvim_create_buf(false, true)' \
+    '  vim.api.nvim_buf_set_lines(oil_buf_a, 0, -1, false, { "a.go" })' \
+    '  vim.api.nvim_buf_set_lines(oil_buf_b, 0, -1, false, { "b.go" })' \
+    '  local scan_dirs = { [oil_buf_a] = scan_a, [oil_buf_b] = scan_b }' \
+    '  local scan_entries = { [oil_buf_a] = { { name = "a.go", type = "file" } }, [oil_buf_b] = { { name = "b.go", type = "file" } } }' \
+    '  package.loaded.oil = {' \
+    '    get_current_dir = function(buf) return scan_dirs[buf] end,' \
+    '    get_entry_on_line = function(buf, line) return scan_entries[buf][line] end,' \
+    '  }' \
+    '  local lsp_notifications = {}' \
+    '  local fake_lsp_client = {' \
+    '    id = 998, root_dir = oil_scope,' \
+    '    config = { root_dir = oil_scope, filetypes = { "go" } },' \
+    '    is_stopped = function() return false end,' \
+    '    notify = function(method, params) table.insert(lsp_notifications, { method = method, params = params }) end,' \
+    '  }' \
+    '  vim.lsp.get_clients = function() return { fake_lsp_client } end' \
+    '  local original_get_client_by_id = vim.lsp.get_client_by_id' \
+    '  vim.lsp.get_client_by_id = function(id) return id == fake_lsp_client.id and fake_lsp_client end' \
+    '  oil_diagnostics.setup()' \
+    '  vim.api.nvim_exec_autocmds("User", { pattern = "OilEnter", data = { buf = oil_buf_a } })' \
+    '  vim.api.nvim_exec_autocmds("User", { pattern = "OilEnter", data = { buf = oil_buf_b } })' \
+    '  local function count_notifications(method, suffix)' \
+    '    local count = 0' \
+    '    for _, notification in ipairs(lsp_notifications) do' \
+    '      local uri = notification.params.textDocument.uri' \
+    '      if notification.method == method and (not suffix or uri:sub(-#suffix) == suffix) then count = count + 1 end' \
+    '    end' \
+    '    return count' \
+    '  end' \
+    '  assert(vim.wait(3000, function() return count_notifications("textDocument/didOpen", "/b.go") == 1 end))' \
+    '  assert(count_notifications("textDocument/didOpen", "/a.go") == 0, "pending scan was not canceled")' \
+    '  vim.api.nvim_set_current_buf(oil_buf_b)' \
+    '  local original_oil_actions = package.loaded["oil.actions"]' \
+    '  package.loaded["oil.actions"] = { refresh = { callback = function() end } }' \
+    '  oil.opts.keymaps["<leader>r"]()' \
+    '  assert(vim.wait(3000, function() return count_notifications("textDocument/didOpen", "/b.go") == 2 end))' \
+    '  assert(count_notifications("textDocument/didClose", "/b.go") == 1, "<leader>r did not close and refresh scanned documents")' \
+    '  local synthetic_buf = vim.fn.bufnr(vim.fs.normalize(scan_b .. "/b.go"))' \
+    '  assert(synthetic_buf ~= -1)' \
+    '  vim.api.nvim_exec_autocmds("BufReadPre", { buffer = synthetic_buf })' \
+    '  assert(count_notifications("textDocument/didClose", "/b.go") == 2, "opening a scanned file did not hand it back to normal LSP handling")' \
+    '  assert(vim.bo[synthetic_buf].buflisted == true)' \
+    '  package.loaded["oil.actions"] = original_oil_actions' \
+    '  vim.lsp.get_client_by_id = original_get_client_by_id' \
+    '  package.loaded.oil, vim.lsp.get_clients = original_oil, original_oil_clients' \
+    '  vim.api.nvim_buf_delete(oil_test_buf, { force = true })' \
+    '  vim.api.nvim_buf_delete(oil_buf_a, { force = true })' \
+    '  vim.api.nvim_buf_delete(oil_buf_b, { force = true })' \
+    '  if vim.api.nvim_buf_is_valid(synthetic_buf) then vim.api.nvim_buf_delete(synthetic_buf, { force = true }) end' \
     '  local textobjects = require("plugins.textobjects")' \
     '  assert(textobjects[1][1] == "nvim-treesitter/nvim-treesitter")' \
     '  assert(textobjects[1].branch == "main")' \
@@ -695,6 +792,7 @@ XDG_DATA_HOME=$test_root/data \
 XDG_STATE_HOME=$test_root/state \
 XDG_CACHE_HOME=$test_root/cache \
 NVIM_LOG_FILE=$test_root/nvim.log \
+NVIM_CONFIG_TEST_ROOT=$test_root \
     nvim --headless \
         '+lua if vim.g.lazy_test_loaded ~= true then vim.cmd("cquit") end' \
         '+qa'

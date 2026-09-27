@@ -4,12 +4,13 @@ This is a modular Neovim configuration bootstrapped from [lazy.nvim](https://git
 
 ## Features
 
-- Gruvbox, Kanagawa Dragon, darker Rosé Pine Main, Catppuccin Mocha, Cursor Dark, Vercel Dark, and Terminal Theme; Oil file browsing and a colorscheme-aware Lualine statusline.
+- Gruvbox, Kanagawa Dragon, darker Rosé Pine Main, Catppuccin Mocha, Cursor Dark, Vercel Dark, and Terminal Theme; Oil file browsing with on-demand LSP diagnostic markers and a colorscheme-aware Lualine statusline.
 - Telescope project-file search (`ff`), open-buffer search (`fr`), and workspace-symbol search (`fs`).
 - Completion through nvim-cmp and LuaSnip.
 - Generic syntax highlighting for extensionless files named `config`, covering common key/value entries, values, and `#` / `;` comment lines.
 - DBML filetype detection and syntax highlighting.
 - LSP diagnostics, details popups, rename with `F2`, definition/reference navigation (`gd`), rich hover details (`gh`), and floating code actions (`<leader>.`) navigated with `Tab` / `Shift-Tab` and confirmed with `Enter`.
+- [Oil diagnostic markers](https://github.com/JezerM/oil-lsp-diagnostics.nvim) inspect files in the current directory and one directory level below, using already-running matching LSP clients (they do not start servers). Hidden and Git-ignored files and files over 1 MiB are skipped; pending scans are canceled when leaving Oil, and `<leader>r` refreshes the current scope. Each scan opens at most 100 unscanned files at a rate of 10 per second. Previously scanned files retain their diagnostics for Oil's parent-directory aggregation during the Neovim session.
 - Relative and absolute line numbers; `<leader>w` saves the current buffer, `<leader>bd` deletes the current buffer, and `<leader>q` asks for confirmation before quitting (unsaved changes still trigger Neovim's normal warning); `jj` or `kk` exits insert mode.
 - Yanked text is briefly highlighted, while search highlighting is transient and clears after searching or leaving Normal mode.
 - Format-on-save for Go, JSON, Lua, and YAML when the matching formatter-capable LSP is attached; PostgreSQL SQL uses pgFormatter, and DBML uses conservative indentation.
