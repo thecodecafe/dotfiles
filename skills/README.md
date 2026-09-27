@@ -4,6 +4,8 @@ This directory contains reusable workflow instructions for coding agents:
 
 - `aidlc`: initializes and runs the AWS AI-DLC workflow.
 - `commit`: plans and creates small conventional commits from the current Git diff.
+- `grill-me`: invokes Matthew Pocock's interview workflow to sharpen a plan or design; it delegates to `grilling`.
+- `grilling`: stress-tests a plan or idea through rounds of focused questions. Both skills are vendored from [mattpocock/skills](https://github.com/mattpocock/skills).
 - `maprepo`: inspects a repository and builds a concise structural map.
 
 Each skill is a directory containing a `SKILL.md` definition. The Makefile links those directories into the supported agent locations:

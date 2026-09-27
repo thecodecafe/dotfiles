@@ -12,7 +12,7 @@ Personal development-machine configuration for AeroSpace, Ghostty, tmux, Neovim,
 | Kanata | Alternative keyboard remapping and Karabiner switching | [kanata/README.md](kanata/README.md) |
 | tmux | Multiplexing, panes, persistence, and terminal integration | [tmux/README.md](tmux/README.md) |
 | Neovim | Lazy.nvim-based editor configuration | [nvim/README.md](nvim/README.md) |
-| Skills | Shared `aidlc`, `commit`, and `maprepo` workflows | [skills/README.md](skills/README.md) |
+| Skills | Shared `aidlc`, `commit`, `grill-me`, `grilling`, and `maprepo` workflows | [skills/README.md](skills/README.md) |
 | Key repeat | macOS keyboard repetition and press-and-hold settings | [key-repeat/README.md](key-repeat/README.md) |
 
 ## Prerequisites
