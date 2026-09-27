@@ -1,5 +1,5 @@
 local M = {
-	active = "terminal-theme",
+	active = "terminal",
 	colorschemes = {
 		gruvbox = "gruvbox",
 		kanagawa = "kanagawa-dragon",
