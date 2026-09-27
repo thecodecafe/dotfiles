@@ -1,5 +1,5 @@
 local M = {
-	active = "cursor-dark",
+	active = "terminal-theme",
 	colorschemes = {
 		gruvbox = "gruvbox",
 		kanagawa = "kanagawa-dragon",
@@ -12,13 +12,13 @@ local M = {
 }
 
 M.choices = {
-	{ name = "gruvbox", label = "Gruvbox" },
-	{ name = "kanagawa", label = "Kanagawa Dragon" },
-	{ name = "rose-pine", label = "Rosé Pine Main" },
-	{ name = "catppuccin", label = "Catppuccin Mocha" },
+	{ name = "gruvbox",     label = "Gruvbox" },
+	{ name = "kanagawa",    label = "Kanagawa Dragon" },
+	{ name = "rose-pine",   label = "Rosé Pine Main" },
+	{ name = "catppuccin",  label = "Catppuccin Mocha" },
 	{ name = "cursor-dark", label = "Cursor Dark" },
-	{ name = "vercel", label = "Vercel Dark" },
-	{ name = "terminal", label = "Terminal Theme" },
+	{ name = "vercel",      label = "Vercel Dark" },
+	{ name = "terminal",    label = "Terminal Theme" },
 }
 
 function M.apply(name)
