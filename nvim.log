@@ -34,3 +34,5 @@ WRN 2026-08-29T08:05:58.216 ?.88199    server_start:197: Failed to start server:
 WRN 2026-08-29T08:16:07.107 ?.6986     server_start:197: Failed to start server: operation not permitted: /var/folders/y3/ffb70j6j5nv06wfs958v7t500000gq/T/nvim.danielbarde/nzgNMg/nvim.6986.0
 WRN 2026-08-29T08:16:07.293 ?.6988     server_start:197: Failed to start server: operation not permitted: /var/folders/y3/ffb70j6j5nv06wfs958v7t500000gq/T/nvim.danielbarde/OOaBVH/nvim.6988.0
 WRN 2026-08-29T08:16:14.812 ?.7189     server_start:197: Failed to start server: operation not permitted: /var/folders/y3/ffb70j6j5nv06wfs958v7t500000gq/T/nvim.danielbarde/wGPAVc/nvim.7189.0
+WRN 2026-10-03T17:27:52.754 ?.23837    server_start:197: Failed to start server: operation not permitted: /var/folders/y3/ffb70j6j5nv06wfs958v7t500000gq/T/nvim.danielbarde/Xdfz3g/nvim.23837.0
+WRN 2026-10-03T18:13:28.416 ?.10517    server_start:197: Failed to start server: operation not permitted: /var/folders/y3/ffb70j6j5nv06wfs958v7t500000gq/T/nvim.danielbarde/XBLVLu/nvim.10517.0
