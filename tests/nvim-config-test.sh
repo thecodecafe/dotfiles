@@ -487,6 +487,59 @@ printf '%s\n' \
     '  vim.lsp.buf.format = original_format' \
     '  vim.notify = original_notify' \
     '  vim.bo.filetype = ""' \
+    '  local openapi_lint = require("config.openapi_lint")' \
+    '  assert(openapi_lint.is_openapi_file("openapi.yaml"))' \
+    '  assert(openapi_lint.is_openapi_file("api.openapi.v1.json"))' \
+    '  assert(openapi_lint.is_openapi_file("swagger.yml"))' \
+    '  assert(not openapi_lint.is_openapi_file("config.yaml"))' \
+    '  assert(not openapi_lint.is_openapi_file("openapi.toml"))' \
+    '  local lint_plugin = require("plugins.lint")' \
+    '  assert(lint_plugin[1][1] == "mfussenegger/nvim-lint")' \
+    '  assert(vim.deep_equal(lint_plugin[1].ft, { "json", "yaml" }))' \
+    '  local previous_lint = package.loaded.lint' \
+    '  local lint_calls = {}' \
+    '  local lint_stub = { linters = {}, try_lint = function(name, opts) table.insert(lint_calls, { name = name, opts = opts }) end }' \
+    '  package.loaded.lint = lint_stub' \
+    '  openapi_lint.setup()' \
+    '  assert(lint_stub.linters.redocly.cmd == "redocly")' \
+    '  assert(lint_stub.linters.redocly.ignore_exitcode == true)' \
+    '  local openapi_autocmds = vim.api.nvim_get_autocmds({ group = "nvim-openapi-lint", event = "BufWritePost" })' \
+    '  assert(#openapi_autocmds == 1)' \
+    '  local original_buffer_name = vim.api.nvim_buf_get_name(0)' \
+    '  local original_executable = vim.fn.executable' \
+    '  vim.fn.executable = function(name) if name == "redocly" then return 1 end return original_executable(name) end' \
+    '  local openapi_test_root = vim.env.NVIM_CONFIG_TEST_ROOT .. "/openapi-lint"' \
+    '  local plain_project = openapi_test_root .. "/plain"' \
+    '  local configured_project = openapi_test_root .. "/configured"' \
+    '  vim.fn.mkdir(plain_project, "p")' \
+    '  vim.fn.mkdir(configured_project, "p")' \
+    '  vim.fn.writefile({ "extends: [recommended]" }, configured_project .. "/redocly.yaml")' \
+    '  vim.api.nvim_buf_set_name(0, plain_project .. "/openapi.yaml")' \
+    '  openapi_autocmds[1].callback({ buf = 0 })' \
+    '  assert(#lint_calls == 1 and lint_calls[1].name == "redocly")' \
+    '  assert(lint_calls[1].opts.cwd == plain_project)' \
+    '  local plain_linter = lint_calls[1].opts.wrap_linter(lint_stub.linters.redocly)' \
+    '  assert(vim.deep_equal(plain_linter.args, { "lint", "--format=json", "--extends=minimal" }))' \
+    '  vim.api.nvim_buf_set_name(0, configured_project .. "/service.swagger.json")' \
+    '  openapi_autocmds[1].callback({ buf = 0 })' \
+    '  assert(#lint_calls == 2 and lint_calls[2].opts.cwd == configured_project)' \
+    '  local configured_linter = lint_calls[2].opts.wrap_linter(lint_stub.linters.redocly)' \
+    '  assert(vim.deep_equal(configured_linter.args, { "lint", "--format=json" }))' \
+    '  vim.api.nvim_buf_set_name(0, plain_project .. "/settings.yaml")' \
+    '  openapi_autocmds[1].callback({ buf = 0 })' \
+    '  assert(#lint_calls == 2, "ordinary YAML files must not invoke Redocly")' \
+    '  vim.api.nvim_buf_set_name(0, configured_project .. "/service.swagger.json")' \
+    '  local report = vim.json.encode({ problems = {' \
+    '    { ruleId = "struct", severity = "error", message = "Invalid field", location = { { source = { ref = configured_project .. "/service.swagger.json" }, start = { line = 3, col = 5 }, ["end"] = { line = 3, col = 9 } } } },' \
+    '    { ruleId = "info-rule", severity = "warn", message = "Review this", location = { { source = { ref = configured_project .. "/referenced.yaml" }, start = { line = 1, col = 1 } } } },' \
+    '  } })' \
+    '  local openapi_diagnostics = lint_stub.linters.redocly.parser(report, 0, configured_project)' \
+    '  assert(#openapi_diagnostics == 1)' \
+    '  assert(openapi_diagnostics[1].lnum == 2 and openapi_diagnostics[1].col == 4 and openapi_diagnostics[1].end_col == 8)' \
+    '  assert(openapi_diagnostics[1].severity == vim.diagnostic.severity.ERROR and openapi_diagnostics[1].code == "struct")' \
+    '  vim.fn.executable = original_executable' \
+    '  vim.api.nvim_buf_set_name(0, original_buffer_name)' \
+    '  package.loaded.lint = previous_lint' \
     '  local completion = require("plugins.completion")' \
     '  assert(completion[1][1] == "hrsh7th/nvim-cmp")' \
     '  assert(completion[1].event == "InsertEnter")' \
@@ -874,6 +927,9 @@ grep -Fq 'official Tree-sitter releases' "$config_directory/README.md" || fail '
 grep -Fq 'xattr -d com.apple.quarantine' "$config_directory/README.md" || fail 'macOS quarantine guidance is missing'
 grep -Fq 'tree-sitter --version' "$config_directory/README.md" || fail 'Tree-sitter verification command is missing'
 grep -Fq 'brew install pgformatter' "$config_directory/README.md" || fail 'pgFormatter installation command is missing'
+grep -Fq 'npm install --global @redocly/cli' "$config_directory/README.md" || fail 'Redocly CLI installation command is missing'
+grep -Fq 'redocly --version' "$config_directory/README.md" || fail 'Redocly CLI verification command is missing'
+grep -Fq 'Lint OpenAPI specs with Redocly after saving' "$config_directory/lua/config/openapi_lint.lua" || fail 'OpenAPI lint-on-save integration is missing'
 grep -Fq 'postgres_lsp' "$config_directory/README.md" || fail 'Postgres language server documentation is missing'
 grep -Fq ':TSUpdate' "$config_directory/README.md" || fail 'Treesitter update step is missing'
 grep -Fq 'default_capabilities()' "$config_directory/lua/config/lsp.lua" || fail 'enhanced LSP completion capabilities are missing'
