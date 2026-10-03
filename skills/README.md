@@ -9,6 +9,7 @@ This directory contains reusable workflow instructions for coding agents:
 - `grilling`: stress-tests a plan or idea through rounds of focused questions. Both skills are vendored from [mattpocock/skills](https://github.com/mattpocock/skills).
 - `issue-to-review`: implements a GitHub or GitLab issue in an isolated worktree, then prepares a ready-for-review PR or MR.
 - `maprepo`: inspects a repository and builds a concise structural map.
+- `postman-api-testing`: discovers, tests, and documents a repository's REST API with the Postman CLI.
 
 Each skill is a directory containing a `SKILL.md` definition. The Makefile links those directories into the supported agent locations:
 
