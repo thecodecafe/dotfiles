@@ -23,6 +23,11 @@ local colors = {
   inactive_tab_foreground = '#A0A0A0',
 }
 
+config.window_frame = {
+  active_titlebar_bg = colors.background,
+  inactive_titlebar_bg = colors.background,
+}
+
 config.colors = {
   background = colors.background,
   foreground = colors.foreground,

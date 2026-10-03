@@ -13,6 +13,8 @@ grep -Fq "foreground = '#E8EAED'" "$config_file"
 grep -Fq "cursor = '#FE8010'" "$config_file"
 grep -Fq "selection = '#FE8019'" "$config_file"
 grep -Fq "active_tab = '#1A1A1A'" "$config_file"
+grep -Fq 'active_titlebar_bg = colors.background' "$config_file"
+grep -Fq 'inactive_titlebar_bg = colors.background' "$config_file"
 
 if command -v luac >/dev/null 2>&1; then
     luac -p "$config_file"
