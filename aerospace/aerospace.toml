@@ -284,3 +284,15 @@ run = "move-node-to-workspace C"
 if.app-id = "com.apple.Notes"
 run = "move-node-to-workspace N"
 
+[[on-window-detected]]
+if.app-id = "md.obsidian"
+run = "move-node-to-workspace N"
+
+[[on-window-detected]]
+if.app-id = "notion.id"
+run = "move-node-to-workspace N"
+
+[[on-window-detected]]
+if.app-id = "com.github.wez.wezterm"
+run = "move-node-to-workspace T"
+
