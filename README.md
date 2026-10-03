@@ -7,6 +7,7 @@ Personal development-machine configuration for AeroSpace, Ghostty, tmux, Neovim,
 | Module | Purpose | Guide |
 | --- | --- | --- |
 | Ghostty | Terminal appearance and behavior | [ghostty/README.md](ghostty/README.md) |
+| WezTerm | Terminal appearance and active-tab colors | [wezterm/README.md](wezterm/README.md) |
 | AeroSpace | macOS window management and workspace bindings | [aerospace/README.md](aerospace/README.md) |
 | Karabiner Elements | Keyboard remapping and Hyper-key navigation | [karabiner/README.md](karabiner/README.md) |
 | Kanata | Alternative keyboard remapping and Karabiner switching | [kanata/README.md](kanata/README.md) |
@@ -19,6 +20,7 @@ Personal development-machine configuration for AeroSpace, Ghostty, tmux, Neovim,
 
 - macOS or another Unix-like system with a POSIX shell, `make`, and `git`.
 - [Ghostty](https://ghostty.org/) and the `CommitMono Nerd Font Mono` font for the terminal module.
+- [WezTerm](https://wezterm.org/) for the WezTerm module.
 - [AeroSpace](https://github.com/nikitabobko/AeroSpace) for the window-management module.
 - [Karabiner Elements](https://karabiner-elements.pqrs.org/) for the keyboard-remapping module.
 - Kanata is optional and requires a compatible Karabiner VirtualHIDDevice driver; see [kanata/README.md](kanata/README.md) before enabling its daemon.
@@ -32,7 +34,7 @@ Personal development-machine configuration for AeroSpace, Ghostty, tmux, Neovim,
 From the repository root:
 
 ```sh
-make all                 # link skills, AeroSpace, Ghostty, Karabiner, Neovim, and tmux
+make all                 # link skills, AeroSpace, Ghostty, WezTerm, Karabiner, Neovim, and tmux
 make karabiner          # link the Karabiner Elements configuration
 make keyboard-kanata    # switch keyboard remapping to Kanata (optional)
 make keyboard-karabiner # switch back to Karabiner Elements
@@ -55,7 +57,7 @@ Destination paths can be overridden on the command line; see the module guides a
 
 ## Repository structure
 
-- `aerospace/`, `ghostty/`, `karabiner/`, `tmux/`, and `nvim/` contain source configurations.
+- `aerospace/`, `ghostty/`, `wezterm/`, `karabiner/`, `tmux/`, and `nvim/` contain source configurations.
 - `skills/` contains the reusable skill definitions.
 - `key-repeat/` contains the macOS keyboard repetition script.
 - `scripts/` contains safe link and dependency installers.
