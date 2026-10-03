@@ -3,6 +3,7 @@
 This directory contains reusable workflow instructions for coding agents:
 
 - `aidlc`: initializes and runs the AWS AI-DLC workflow.
+- `api-route-docs`: discovers HTTP API routes within a supplied scope and documents them as OpenAPI or a Postman collection.
 - `commit`: plans and creates small conventional commits from the current Git diff.
 - `grill-me`: invokes Matthew Pocock's interview workflow to sharpen a plan or design; it delegates to `grilling`.
 - `grilling`: stress-tests a plan or idea through rounds of focused questions. Both skills are vendored from [mattpocock/skills](https://github.com/mattpocock/skills).
