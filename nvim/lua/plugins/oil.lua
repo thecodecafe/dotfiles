@@ -14,6 +14,10 @@ local oil = {
       ["<C-h>"] = false,
       ["<C-l>"] = false,
       ["<Esc>"] = "actions.close",
+      ["<leader>d"] = function()
+        local bufnr = vim.api.nvim_get_current_buf()
+        require("config.oil_diagnostics").scan(bufnr)
+      end,
       ["gR"] = function()
         local bufnr = vim.api.nvim_get_current_buf()
         require("config.oil_diagnostics").refresh(bufnr, function()

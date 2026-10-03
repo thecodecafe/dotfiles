@@ -112,6 +112,7 @@ printf '%s\n' \
     '  assert(oil.opts.keymaps["<C-h>"] == false)' \
     '  assert(oil.opts.keymaps["<C-l>"] == false)' \
     '  assert(oil.opts.keymaps["<Esc>"] == "actions.close")' \
+    '  assert(type(oil.opts.keymaps["<leader>d"]) == "function")' \
     '  assert(type(oil.opts.keymaps.gR) == "function")' \
     '  assert(type(oil.opts.keymaps["<leader>r"]) == "function")' \
     '  assert(oil.dependencies[1][1] == "JezerM/oil-lsp-diagnostics.nvim")' \
@@ -147,6 +148,7 @@ printf '%s\n' \
     '  assert(oil_directory == vim.fs.normalize(oil_scope))' \
     '  assert(#oil_paths == 2 and oil_paths[1].path == vim.fs.normalize(oil_scope .. "/top.go"))' \
     '  assert(oil_paths[2].path == vim.fs.normalize(oil_scope .. "/child/child.go"))' \
+    '  assert(type(oil_diagnostics.scan) == "function")' \
     '  vim.fn.writefile({ "ignored.go" }, oil_scope .. "/.gitignore")' \
     '  vim.fn.writefile({ "package ignored" }, oil_scope .. "/ignored.go")' \
     '  vim.fn.system({ "git", "-C", oil_scope, "init", "-q" })' \
@@ -158,15 +160,20 @@ printf '%s\n' \
     '  assert(ignored_paths[vim.fs.normalize(oil_scope .. "/ignored.go")] == true)' \
     '  local scan_a, scan_b = oil_scope .. "/scan-a", oil_scope .. "/scan-b"' \
     '  vim.fn.mkdir(scan_a, "p")' \
-    '  vim.fn.mkdir(scan_b, "p")' \
+    '  vim.fn.mkdir(scan_b .. "/child", "p")' \
     '  vim.fn.writefile({ "package a" }, scan_a .. "/a.go")' \
+    '  vim.fn.writefile({ "package second" }, scan_a .. "/a-second.go")' \
     '  vim.fn.writefile({ "package b" }, scan_b .. "/b.go")' \
+    '  vim.fn.writefile({ "package child" }, scan_b .. "/child/b-child.go")' \
     '  local oil_buf_a = vim.api.nvim_create_buf(false, true)' \
     '  local oil_buf_b = vim.api.nvim_create_buf(false, true)' \
-    '  vim.api.nvim_buf_set_lines(oil_buf_a, 0, -1, false, { "a.go" })' \
-    '  vim.api.nvim_buf_set_lines(oil_buf_b, 0, -1, false, { "b.go" })' \
+    '  vim.api.nvim_buf_set_lines(oil_buf_a, 0, -1, false, { "a.go", "a-second.go" })' \
+    '  vim.api.nvim_buf_set_lines(oil_buf_b, 0, -1, false, { "b.go", "child/" })' \
     '  local scan_dirs = { [oil_buf_a] = scan_a, [oil_buf_b] = scan_b }' \
-    '  local scan_entries = { [oil_buf_a] = { { name = "a.go", type = "file" } }, [oil_buf_b] = { { name = "b.go", type = "file" } } }' \
+    '  local scan_entries = {' \
+    '    [oil_buf_a] = { { name = "a.go", type = "file" }, { name = "a-second.go", type = "file" } },' \
+    '    [oil_buf_b] = { { name = "b.go", type = "file" }, { name = "child", type = "directory" } },' \
+    '  }' \
     '  package.loaded.oil = {' \
     '    get_current_dir = function(buf) return scan_dirs[buf] end,' \
     '    get_entry_on_line = function(buf, line) return scan_entries[buf][line] end,' \
@@ -192,18 +199,49 @@ printf '%s\n' \
     '    end' \
     '    return count' \
     '  end' \
-    '  assert(vim.wait(3000, function() return count_notifications("textDocument/didOpen", "/b.go") == 1 end))' \
-    '  assert(count_notifications("textDocument/didOpen", "/a.go") == 0, "pending scan was not canceled")' \
-    '  vim.api.nvim_set_current_buf(oil_buf_b)' \
+    '  assert(count_notifications("textDocument/didOpen") == 0, "Oil entry started diagnostics automatically")' \
     '  local original_oil_actions = package.loaded["oil.actions"]' \
-    '  package.loaded["oil.actions"] = { refresh = { callback = function() end } }' \
+    '  local refresh_count = 0' \
+    '  package.loaded["oil.actions"] = { refresh = { callback = function() refresh_count = refresh_count + 1 end } }' \
+    '  vim.api.nvim_set_current_buf(oil_buf_a)' \
+    '  oil.opts.keymaps["<leader>d"]()' \
+    '  assert(refresh_count == 0, "<leader>d refreshed the Oil listing")' \
+    '  assert(vim.wait(3000, function() return count_notifications("textDocument/didOpen", "/a.go") == 1 end))' \
+    '  vim.api.nvim_exec_autocmds("BufLeave", { buffer = oil_buf_a })' \
+    '  vim.wait(250, function() return count_notifications("textDocument/didOpen", "/a-second.go") > 0 end)' \
+    '  assert(count_notifications("textDocument/didOpen", "/a-second.go") == 0, "leaving Oil did not cancel a pending scan")' \
+    '  vim.api.nvim_set_current_buf(oil_buf_b)' \
+    '  oil.opts.keymaps["<leader>d"]()' \
+    '  assert(refresh_count == 0, "<leader>d refreshed the Oil listing")' \
+    '  assert(vim.wait(3000, function()' \
+    '    return count_notifications("textDocument/didOpen", "/b.go") == 1' \
+    '      and count_notifications("textDocument/didOpen", "/child/b-child.go") == 1' \
+    '  end), "<leader>d did not scan direct and immediate-child files")' \
+    '  oil.opts.keymaps["<leader>d"]()' \
+    '  assert(refresh_count == 0, "<leader>d refreshed the Oil listing")' \
+    '  assert(vim.wait(3000, function()' \
+    '    return count_notifications("textDocument/didOpen", "/b.go") == 2' \
+    '      and count_notifications("textDocument/didOpen", "/child/b-child.go") == 2' \
+    '  end), "repeated <leader>d did not rerun diagnostics")' \
+    '  assert(count_notifications("textDocument/didClose", "/b.go") == 1, "repeated <leader>d did not close prior scan documents")' \
     '  oil.opts.keymaps["<leader>r"]()' \
-    '  assert(vim.wait(3000, function() return count_notifications("textDocument/didOpen", "/b.go") == 2 end))' \
-    '  assert(count_notifications("textDocument/didClose", "/b.go") == 1, "<leader>r did not close and refresh scanned documents")' \
+    '  assert(refresh_count == 1, "<leader>r did not refresh the Oil listing")' \
+    '  assert(vim.wait(3000, function()' \
+    '    return count_notifications("textDocument/didOpen", "/b.go") == 3' \
+    '      and count_notifications("textDocument/didOpen", "/child/b-child.go") == 3' \
+    '  end), "<leader>r did not rescan direct and immediate-child files")' \
+    '  assert(count_notifications("textDocument/didClose", "/b.go") == 2, "<leader>r did not close and refresh scanned documents")' \
+    '  oil.opts.keymaps.gR()' \
+    '  assert(refresh_count == 2, "gR did not refresh the Oil listing")' \
+    '  assert(vim.wait(3000, function()' \
+    '    return count_notifications("textDocument/didOpen", "/b.go") == 4' \
+    '      and count_notifications("textDocument/didOpen", "/child/b-child.go") == 4' \
+    '  end), "gR did not rescan direct and immediate-child files")' \
+    '  assert(count_notifications("textDocument/didClose", "/b.go") == 3, "gR did not close and refresh scanned documents")' \
     '  local synthetic_buf = vim.fn.bufnr(vim.fs.normalize(scan_b .. "/b.go"))' \
     '  assert(synthetic_buf ~= -1)' \
     '  vim.api.nvim_exec_autocmds("BufReadPre", { buffer = synthetic_buf })' \
-    '  assert(count_notifications("textDocument/didClose", "/b.go") == 2, "opening a scanned file did not hand it back to normal LSP handling")' \
+    '  assert(count_notifications("textDocument/didClose", "/b.go") == 4, "opening a scanned file did not hand it back to normal LSP handling")' \
     '  assert(vim.bo[synthetic_buf].buflisted == true)' \
     '  package.loaded["oil.actions"] = original_oil_actions' \
     '  vim.lsp.get_client_by_id = original_get_client_by_id' \

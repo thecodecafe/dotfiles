@@ -10,7 +10,6 @@ local queue_timer
 local active_oil_buffer
 local records = {}
 local buffers = {}
-local refreshing = false
 local setup_done = false
 
 local function normalize(path)
@@ -374,18 +373,20 @@ local function scan_paths(bufnr, force)
   end)
 end
 
-function M.refresh(_, refresh_action)
-  refreshing = true
-  local ok, err = pcall(refresh_action)
-  if not ok then
-    refreshing = false
-    error(err)
+function M.scan(bufnr)
+  bufnr = bufnr or vim.api.nvim_get_current_buf()
+  if not vim.api.nvim_buf_is_valid(bufnr) or not require("oil").get_current_dir(bufnr) then
+    return
   end
+  scan_paths(bufnr, true)
+end
+
+function M.refresh(_, refresh_action)
+  refresh_action()
   vim.schedule(function()
-    refreshing = false
     local current_buf = vim.api.nvim_get_current_buf()
     if vim.api.nvim_buf_is_valid(current_buf) and require("oil").get_current_dir(current_buf) then
-      scan_paths(current_buf, true)
+      M.scan(current_buf)
     end
   end)
 end
@@ -396,21 +397,6 @@ function M.setup()
   end
   setup_done = true
   local group = vim.api.nvim_create_augroup("oil-lsp-diagnostics-scan", { clear = true })
-
-  vim.api.nvim_create_autocmd("User", {
-    group = group,
-    pattern = "OilEnter",
-    callback = function(event)
-      local bufnr = event.data and event.data.buf or event.buf
-      if not bufnr or bufnr == 0 then
-        bufnr = vim.api.nvim_get_current_buf()
-      end
-      if not refreshing then
-        scan_paths(bufnr, false)
-      end
-    end,
-    desc = "Scan the current Oil directory for diagnostics",
-  })
 
   vim.api.nvim_create_autocmd("BufLeave", {
     group = group,
