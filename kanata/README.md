@@ -11,6 +11,14 @@ This module provides an optional Kanata version of the current Karabiner keyboar
 - Tap/hold thresholds: 150 ms; double-tap window: 300 ms, matching the current Karabiner window.
 - Escape is suppressed when the second tap becomes a held Hyper press. A lone Caps Lock tap may wait for the double-tap window; pressing another key can resolve the tap sooner.
 
+## Mouse isolation
+
+The MX Master 2S also appears in Kanata's keyboard-device list. The config excludes it with `macos-dev-names-exclude` so Kanata does not capture that device. Other keyboards remain automatically detected, keeping the config usable across machines without a keyboard allowlist.
+
+If another mouse is affected, run `kanata --list` and add its exact reported name to the exclusion list. Kanata's [macOS device-filter documentation](https://github.com/jtroo/kanata/blob/main/docs/config.adoc#macos-only-macos-dev-names-exclude) describes this option.
+
+Device-filter changes require a full restart, not a live config reload. If Karabiner is active, use `make keyboard-kanata`; if Kanata is already active, use `make kanata-restart`. Test pointer movement, scrolling, and buttons after switching. Use `make keyboard-karabiner` if the mouse still misbehaves.
+
 ## Prerequisites
 
 Kanata uses the Karabiner VirtualHIDDevice driver on macOS and must run as root. This machine already has Karabiner-Elements and its driver installed. The current Kanata main branch requires a compatible v8-or-newer VirtualHIDDevice driver; do not replace or uninstall the existing driver without checking compatibility first. Kanata also needs Input Monitoring and Accessibility permissions in System Settings.

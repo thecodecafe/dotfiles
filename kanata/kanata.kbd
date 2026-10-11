@@ -4,6 +4,10 @@
 (defcfg
   process-unmapped-keys yes
   concurrent-tap-hold yes
+  ;; This mouse also advertises a keyboard interface; leave it to macOS.
+  macos-dev-names-exclude (
+    "MX Master 2S"
+  )
 )
 
 (defsrc caps h j k l)
