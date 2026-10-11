@@ -25,8 +25,14 @@ esac
 
 core_output=$("$project_root/scripts/karabiner-core-service.sh" stop --dry-run)
 case "$core_output" in
-    *'org.pqrs.service.daemon.Karabiner-Core-Service'*'launchctl'*) ;;
+    *'launchctl'*'org.pqrs.service.agent.Karabiner-Core-Service-rev2'*'system/org.pqrs.service.daemon.Karabiner-Core-Service'*) ;;
     *) fail "Karabiner Core Service dry-run output is unexpected: $core_output" ;;
+esac
+
+start_output=$("$project_root/scripts/karabiner-core-service.sh" start --dry-run)
+case "$start_output" in
+    *'launchctl'*'org.pqrs.service.agent.Karabiner-Core-Service-rev2'*'system/org.pqrs.service.daemon.Karabiner-Core-Service'*) ;;
+    *) fail "Karabiner Core Service start dry-run output is unexpected: $start_output" ;;
 esac
 
 switch_output=$(HOME="$project_root/tests" "$project_root/scripts/switch-keyboard-remapper.sh" kanata --dry-run)
