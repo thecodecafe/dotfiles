@@ -1,11 +1,11 @@
 # Ghostty
 
-This module configures Ghostty's visual defaults: CommitMono Nerd Font Mono at 12pt, Gruvbox-inspired dark colors, opaque background, and orange cursor/selection accents.
+This module configures Ghostty's visual defaults: AtkynsonMono Nerd Font Mono at 12pt, Gruvbox-inspired dark colors, opaque background, and orange cursor/selection accents.
 
 ## Dependencies
 
 - Ghostty installed and available on the machine.
-- `CommitMono Nerd Font Mono` installed for the configured font family.
+- `AtkynsonMono Nerd Font Mono` installed for the configured font family.
 
 ## Install
 

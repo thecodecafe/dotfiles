@@ -1,6 +1,6 @@
 # WezTerm
 
-This module mirrors the Ghostty font and core colors, with a subtly lighter active tab (`#1A1A1A`) against the black terminal background.
+This module uses AtkynsonMono Nerd Font Mono to match Ghostty and mirrors its core colors, with a subtly lighter active tab (`#1A1A1A`) against the black terminal background.
 
 ## Install
 
