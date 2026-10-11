@@ -7,7 +7,7 @@ config_file=$project_root/wezterm/wezterm.lua
 
 grep -Fq "wezterm.font('AtkynsonMono Nerd Font Mono')" "$config_file"
 grep -Fq 'config.font_size = 12' "$config_file"
-grep -Fq 'config.window_background_opacity = 0.9' "$config_file"
+grep -Fq 'config.window_background_opacity = 1.0' "$config_file"
 grep -Fq "background = '#000000'" "$config_file"
 grep -Fq "foreground = '#E8EAED'" "$config_file"
 grep -Fq "cursor = '#FE8010'" "$config_file"
