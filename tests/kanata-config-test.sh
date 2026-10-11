@@ -20,9 +20,8 @@ awk '
     END { exit !mouse_excluded }
 ' "$config" || fail 'MX Master 2S must be excluded from macOS keyboard capture'
 grep -Fq '(defsrc caps h j k l)' "$config" || fail 'Caps Lock and navigation keys are not declared'
-grep -Fq 'caps (tap-dance 300 (' "$config" || fail 'double-tap window must be 300 ms'
-grep -Fq '(tap-hold-press 150 150 esc lctl)' "$config" || fail 'single tap/Control behavior is missing'
-grep -Fq '(tap-hold-press 150 150 esc @hyper)' "$config" || fail 'double-tap Hyper behavior is missing'
+caps_action=$(awk '{ sub(/;;.*/, ""); printf "%s ", $0 }' "$config" | tr -s '[:space:]' ' ')
+printf '%s\n' "$caps_action" | grep -Fq 'caps (tap-hold-press 0 150 (tap-dance 100 ( esc (tap-hold-press 0 150 esc @hyper) )) lctl )' || fail 'Caps Lock must resolve holds before starting double-tap detection'
 grep -Fq 'hyper (multi (layer-while-held hyper) lctl lalt lmet lsft)' "$config" || fail 'Hyper modifiers/layer are incorrect'
 grep -Eq '_[[:space:]]+\(unmod left\)[[:space:]]+\(unmod down\)[[:space:]]+\(unmod up\)[[:space:]]+\(unmod right\)' "$config" || fail 'Hyper navigation must map H/J/K/L to unmodified arrows'
 

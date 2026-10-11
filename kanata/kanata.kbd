@@ -14,10 +14,15 @@
 
 (defalias
   hyper (multi (layer-while-held hyper) lctl lalt lmet lsft)
-  caps (tap-dance 300 (
-    (tap-hold-press 150 150 esc lctl)
-    (tap-hold-press 150 150 esc @hyper)
-  ))
+  ;; Resolve holds first; a completed tap starts the double-tap window.
+  ;; Zero tap-repress timeouts let every hold resolve to its modifier.
+  caps (tap-hold-press 0 150
+    (tap-dance 100 (
+      esc
+      (tap-hold-press 0 150 esc @hyper)
+    ))
+    lctl
+  )
 )
 
 (deflayer base
