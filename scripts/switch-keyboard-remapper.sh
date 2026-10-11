@@ -45,7 +45,9 @@ if [ "$mode" = kanata ]; then
     }
     restore_karabiner() {
         "$service" stop || :
-        make -s -C "$project_root" karabiner KARABINER_CONFIG_FILE="$karabiner_destination" || :
+        if [ ! -e "$karabiner_destination" ] && [ ! -L "$karabiner_destination" ]; then
+            make -s -C "$project_root" karabiner KARABINER_CONFIG_FILE="$karabiner_destination" || :
+        fi
         "$core_service" start || :
         "$refresh" start || :
     }
@@ -54,13 +56,15 @@ if [ "$mode" = kanata ]; then
         printf '%s\n' 'Could not stop Karabiner Core Service; leaving its config link unchanged.' >&2
         exit 1
     fi
-    if ! make -s -C "$project_root" unlink-karabiner KARABINER_CONFIG_FILE="$karabiner_destination"; then
-        printf '%s\n' 'Could not unlink the Karabiner config; restoring Karabiner service.' >&2
-        restore_karabiner
-        exit 1
+    if [ -L "$karabiner_destination" ] && [ "$(readlink "$karabiner_destination")" = "$karabiner_source" ]; then
+        if ! make -s -C "$project_root" unlink-karabiner KARABINER_CONFIG_FILE="$karabiner_destination"; then
+            printf '%s\n' 'Could not unlink the repository-owned Karabiner config; restoring Karabiner service.' >&2
+            restore_karabiner
+            exit 1
+        fi
     fi
-    if [ -e "$karabiner_destination" ] || [ -L "$karabiner_destination" ]; then
-        printf 'Karabiner config destination remains in place; refusing to start Kanata: %s\n' "$karabiner_destination" >&2
+    if [ -L "$karabiner_destination" ]; then
+        printf 'Karabiner config has an unrelated symlink; refusing to start Kanata: %s\n' "$karabiner_destination" >&2
         restore_karabiner
         exit 1
     fi
@@ -73,9 +77,11 @@ if [ "$mode" = kanata ]; then
     fi
 else
     "$service" stop
-    if ! make -s -C "$project_root" karabiner KARABINER_CONFIG_FILE="$karabiner_destination"; then
-        "$service" start || :
-        exit 1
+    if [ ! -e "$karabiner_destination" ] && [ ! -L "$karabiner_destination" ]; then
+        if ! make -s -C "$project_root" karabiner KARABINER_CONFIG_FILE="$karabiner_destination"; then
+            "$service" start || :
+            exit 1
+        fi
     fi
     if ! "$core_service" start || ! "$refresh" start; then
         printf '%s\n' 'Karabiner did not come back up; its config link is restored but the Core Service needs attention.' >&2
