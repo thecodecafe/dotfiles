@@ -7,7 +7,7 @@ This module provides an optional Kanata version of the current Karabiner keyboar
 - Tap Caps Lock: Escape.
 - Hold Caps Lock: left Control.
 - Double-tap and hold Caps Lock: Hyper (left Control + Option + Command + Shift).
-- While Hyper is held, H/J/K/L send Left/Down/Up/Right.
+- While Hyper is held, H/J/K/L send plain Left/Down/Up/Right. These actions temporarily release the Hyper modifiers with `unmod`, then restore them when the navigation key is released; other Hyper shortcuts retain the modifiers.
 - Tap/hold thresholds: 150 ms; double-tap window: 300 ms, matching the current Karabiner window.
 - Escape is suppressed when the second tap becomes a held Hyper press. A lone Caps Lock tap may wait for the double-tap window; pressing another key can resolve the tap sooner.
 

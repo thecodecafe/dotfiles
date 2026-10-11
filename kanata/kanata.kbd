@@ -25,5 +25,6 @@
 )
 
 (deflayer hyper
-  _ left down up right
+  ;; Hyper stays held for other shortcuts, but navigation sends plain arrows.
+  _ (unmod left) (unmod down) (unmod up) (unmod right)
 )

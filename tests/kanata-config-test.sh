@@ -24,6 +24,6 @@ grep -Fq 'caps (tap-dance 300 (' "$config" || fail 'double-tap window must be 30
 grep -Fq '(tap-hold-press 150 150 esc lctl)' "$config" || fail 'single tap/Control behavior is missing'
 grep -Fq '(tap-hold-press 150 150 esc @hyper)' "$config" || fail 'double-tap Hyper behavior is missing'
 grep -Fq 'hyper (multi (layer-while-held hyper) lctl lalt lmet lsft)' "$config" || fail 'Hyper modifiers/layer are incorrect'
-grep -Eq '_[[:space:]]+left[[:space:]]+down[[:space:]]+up[[:space:]]+right' "$config" || fail 'Hyper navigation does not map H/J/K/L to arrows'
+grep -Eq '_[[:space:]]+\(unmod left\)[[:space:]]+\(unmod down\)[[:space:]]+\(unmod up\)[[:space:]]+\(unmod right\)' "$config" || fail 'Hyper navigation must map H/J/K/L to unmodified arrows'
 
 printf '%s\n' 'Kanata configuration test passed.'
