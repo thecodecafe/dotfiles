@@ -47,6 +47,24 @@ is_loaded() {
     launchctl print "system/$label" >/dev/null 2>&1
 }
 
+is_running() {
+    launchctl print "system/$label" 2>/dev/null | awk '
+        $1 == "state" && $2 == "=" && $3 == "running" { running = 1 }
+        $1 == "pid" && $2 == "=" { pid = 1 }
+        END { exit !(running && pid) }
+    '
+}
+
+verify_start() {
+    # Kanata waits two seconds before opening keyboards and checking permissions.
+    sleep 3
+    if ! is_running; then
+        printf '%s\n' 'Kanata exited or did not start. Check Input Monitoring, Accessibility, and /var/log/kanata.log.' >&2
+        tail -n 20 /var/log/kanata.log >&2 2>/dev/null || :
+        return 1
+    fi
+}
+
 plist_has_our_label() {
     [ -f "$plist" ] &&
         [ "$(/usr/libexec/PlistBuddy -c 'Print :Label' "$plist" 2>/dev/null || :)" = "$label" ]
@@ -126,11 +144,16 @@ EOF
         sudo -v
         run_root launchctl enable "system/$label"
         if is_loaded; then
-            printf '%s\n' 'Kanata LaunchDaemon is already loaded.'
+            if is_running; then
+                printf '%s\n' 'Kanata LaunchDaemon is already running.'
+                exit 0
+            fi
+            run_root launchctl kickstart -k "system/$label"
         else
             run_root launchctl bootstrap system "$plist"
-            printf '%s\n' 'Kanata LaunchDaemon started.'
         fi
+        verify_start
+        printf '%s\n' 'Kanata LaunchDaemon started and is running.'
         ;;
     stop)
         if [ ! -e "$plist" ]; then
@@ -153,13 +176,17 @@ EOF
         else
             run_root launchctl bootstrap system "$plist"
         fi
-        printf '%s\n' 'Kanata LaunchDaemon restarted.'
+        verify_start
+        printf '%s\n' 'Kanata LaunchDaemon restarted and is running.'
         ;;
     status)
         if plist_has_our_label; then
             printf 'Installed: %s\n' "$plist"
-            if is_loaded; then
-                printf '%s\n' 'State: loaded'
+            if is_running; then
+                printf '%s\n' 'State: running'
+            elif is_loaded; then
+                printf '%s\n' 'State: loaded but not running (check /var/log/kanata.log)'
+                exit 1
             else
                 printf '%s\n' 'State: stopped/disabled'
             fi
