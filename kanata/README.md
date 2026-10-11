@@ -74,7 +74,7 @@ make karabiner-refresh
 make kanata-service-uninstall
 ```
 
-Switching to Kanata disables and stops Karabiner's Core Service first, then removes only this repository's config symlink (the tracked JSON stays in the repo) and starts Kanata. Switching back stops and disables Kanata for the next boot, restores the Karabiner symlink, re-enables/restarts its Core Service, and refreshes the config watcher. If Kanata cannot start, the switch script attempts to restore Karabiner automatically. The switch helper uses the existing symlink manager and macOS `launchctl`; it does not use `karabiner_cli`.
+Switching to Kanata disables and unloads every Karabiner Core Service agent and root daemon first, leaving the shared VirtualHIDDevice daemon running. It then removes only this repository's config symlink (the tracked JSON stays in the repo); existing unrelated regular config files are preserved. Switching back stops and disables Kanata for the next boot, restores the repository symlink only if the config is absent, re-enables/restarts Karabiner's Core Services, and refreshes the config watcher. If the handoff fails, the switch script attempts to restore Karabiner automatically. The switch helper uses the existing symlink manager and macOS `launchctl`; it does not use `karabiner_cli`.
 
 Use the `keyboard-kanata` and `keyboard-karabiner` targets for normal switching. The individual service and Core Service targets are low-level controls and do not change the other remapper's state or config link.
 
