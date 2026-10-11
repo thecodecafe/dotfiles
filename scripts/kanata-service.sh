@@ -44,12 +44,12 @@ run_root() {
 }
 
 is_loaded() {
-    sudo launchctl print "system/$label" >/dev/null 2>&1
+    launchctl print "system/$label" >/dev/null 2>&1
 }
 
 plist_has_our_label() {
     [ -f "$plist" ] &&
-        [ "$(sudo /usr/libexec/PlistBuddy -c 'Print :Label' "$plist" 2>/dev/null || :)" = "$label" ]
+        [ "$(/usr/libexec/PlistBuddy -c 'Print :Label' "$plist" 2>/dev/null || :)" = "$label" ]
 }
 
 xml_escape() {
