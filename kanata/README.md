@@ -46,6 +46,8 @@ brew install --HEAD kanata
 
 Open the Kanata binary once or add it manually in System Settings if macOS does not prompt for permissions. Kanata's [macOS setup guide](https://github.com/jtroo/kanata/blob/main/docs/setup-macos.md) has current driver and permission details.
 
+If Kanata still reports missing permissions while its toggles are enabled, the entries may belong to an older Homebrew version. Remove the old Kanata entries from both Input Monitoring and Accessibility and re-add the current binary. `codesign -dv "$(brew --prefix kanata)/bin/kanata"` displays the resolved executable path; select that exact file. Homebrew upgrades can change this path, so permissions may need to be granted again after an upgrade.
+
 ## Daemon and switching
 
 Install the LaunchDaemon in a disabled state; this requires an administrator password and does not enable Kanata:
