@@ -1,7 +1,7 @@
 local wezterm = require 'wezterm'
 local config = wezterm.config_builder()
 
-config.font = wezterm.font('CommitMono Nerd Font Mono')
+config.font = wezterm.font('AtkynsonMono Nerd Font Mono')
 config.font_size = 12
 
 config.window_background_opacity = 0.9
