@@ -13,6 +13,19 @@ This module provides an optional Kanata version of the current Karabiner keyboar
 
 The first press resolves as a tap or Control hold before double-tap detection begins. This gives the second press the full 100 ms after release and keeps the first hold responsive at 150 ms. Both tap-repress timeouts are zero so a rapid subsequent hold can activate its modifier.
 
+## Configuration checks
+
+Run the static configuration checks with `./tests/kanata-config-test.sh`. For event-based timing and navigation checks, build the upstream simulator from the same Kanata revision as the installed binary, using a separate build directory:
+
+```sh
+cargo build --locked --manifest-path /path/to/kanata/simulated_input/Cargo.toml \
+  --target-dir /tmp/kanata-simulator
+KANATA_SIM_BIN=/tmp/kanata-simulator/debug/kanata_simulated_input \
+  ./tests/kanata-config-test.sh --behavior
+```
+
+Behavior mode requires an executable `KANATA_SIM_BIN` and fails if it is missing. It checks Escape suppression, both hold thresholds, the double-tap window, plain navigation and repeat, other Hyper shortcuts, and modifier cleanup in both release orders. After changing the mapping, run `kanata --check -c kanata/kanata.kbd`, restart with `make kanata-restart`, and confirm double-tap and hold followed by J/K keeps an open menu visible.
+
 ## Mouse isolation
 
 The MX Master 2S also appears in Kanata's keyboard-device list. The config excludes it with `macos-dev-names-exclude` so Kanata does not capture that device. Other keyboards remain automatically detected, keeping the config usable across machines without a keyboard allowlist.
