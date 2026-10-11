@@ -11,9 +11,9 @@ if ! command -v ghostty >/dev/null 2>&1; then
 fi
 
 ghostty +validate-config --config-file="$config_file"
-ghostty +show-face --font-family="CommitMono Nerd Font" --string=A >/dev/null
+ghostty +show-face --font-family="AtkynsonMono Nerd Font Mono" --string=A >/dev/null
 
-grep -Fqx 'font-family = "CommitMono Nerd Font"' "$config_file"
+grep -Fqx 'font-family = "AtkynsonMono Nerd Font Mono"' "$config_file"
 grep -Fqx 'font-size = 12' "$config_file"
 
 printf '%s\n' 'Ghostty configuration test passed.'

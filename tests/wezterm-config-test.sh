@@ -5,7 +5,7 @@ set -eu
 project_root=$(CDPATH= cd -- "$(dirname "$0")/.." && pwd -P)
 config_file=$project_root/wezterm/wezterm.lua
 
-grep -Fq "wezterm.font('CommitMono Nerd Font Mono')" "$config_file"
+grep -Fq "wezterm.font('AtkynsonMono Nerd Font Mono')" "$config_file"
 grep -Fq 'config.font_size = 12' "$config_file"
 grep -Fq 'config.window_background_opacity = 0.9' "$config_file"
 grep -Fq "background = '#000000'" "$config_file"
