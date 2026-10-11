@@ -53,7 +53,8 @@ if [ "$mode" = kanata ]; then
     }
 
     if ! "$core_service" stop; then
-        printf '%s\n' 'Could not stop Karabiner Core Service; leaving its config link unchanged.' >&2
+        printf '%s\n' 'Could not stop every Karabiner Core Service; restoring Karabiner.' >&2
+        restore_karabiner
         exit 1
     fi
     if [ -L "$karabiner_destination" ] && [ "$(readlink "$karabiner_destination")" = "$karabiner_source" ]; then
