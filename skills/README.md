@@ -8,7 +8,7 @@ This directory contains reusable workflow instructions for coding agents:
 - `grill-me`: invokes Matthew Pocock's interview workflow to sharpen a plan or design; it delegates to `grilling`.
 - `grilling`: stress-tests a plan or idea through rounds of focused questions. Both skills are vendored from [mattpocock/skills](https://github.com/mattpocock/skills).
 - `issue-to-review`: implements a GitHub or GitLab issue in an isolated worktree, then prepares a ready-for-review PR or MR.
-- `lets-discuss`: collaboratively clarifies a product, domain, business, or architecture topic through grounded discussion and explicit decisions, without implementing the discussed system.
+- `lets-discuss`: develops your own ideas and reasoning about a product, domain, business, or architecture topic through learning-first discussion and explicit decisions, without implementing the discussed system.
 - `maprepo`: inspects a repository and builds a concise structural map.
 - `postman-api-testing`: discovers, tests, and documents a repository's REST API with the Postman CLI.
 
@@ -35,6 +35,8 @@ Use these invocations inside the corresponding agent's conversation:
 | OpenCode | `/lets-discuss how should tenant access work?` |
 
 The trailing text is the discussion topic; it can also be a document path or proposed decision. Without a topic or relevant conversation context, the skill asks what to discuss. It keeps accepted decisions separate from proposals and open questions, and only updates documents when authorized.
+
+The default is learning-first: you contribute your understanding or proposal before the agent presents a complete solution. It explains meaningful weaknesses and why they matter, offers a small hint, and gives you room to revise. Feedback on your revision explains what improved and what remains unresolved. Fuller suggestions or complete alternatives follow when you ask or get stuck; direct factual questions and explicit requests for recommendations still receive direct answers. Missing concepts are explained plainly, research supports the discussion, and occasional recaps capture useful principles alongside decisions without quizzes or grading.
 
 [Codex supports explicit skill mentions and symlinked skill directories](https://learn.chatgpt.com/docs/build-skills). [Claude Code invokes skills as slash commands and appends arguments when the skill has no argument placeholder](https://code.claude.com/docs/en/skills). [OpenCode exposes a skill as a slash command when its metadata includes `opencode/slash: "true"`](https://opencode.ai/docs/skills); this is the only tool-specific addition to the shared definition, so no command adapter is needed.
 
