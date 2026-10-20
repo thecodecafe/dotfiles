@@ -258,7 +258,7 @@ run = "move-node-to-workspace B"
 
 [[on-window-detected]]
 if.app-id = "com.adibhanna.zennotes"
-run = "move-node-to-workspace M"
+run = "move-node-to-workspace N"
 
 [[on-window-detected]]
 if.app-id = "com.openai.chat"
