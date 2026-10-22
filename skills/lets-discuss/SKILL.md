@@ -70,6 +70,16 @@ Keep tentative terminology tentative. Distinguish intended product behavior from
 
 Default to discussion in the conversation. Update files when the user requests documentation or existing instructions and authorization establish that agreements should be recorded.
 
+At the end of the discussion, if there are accepted decisions that remain unrecorded and capture is not already authorized, briefly recap those decisions and explicitly ask:
+
+> Would you like me to capture these agreed decisions now?
+
+Offer this checkpoint only when wrapping up, not after individual decisions or intermediate milestones. Skip it when there are no new accepted decisions to record. A recap request or agreement with a design is not itself permission to write documentation.
+
+Use the authoritative documents and repository conventions already established in context to determine where to capture; do not add a question asking the user where to put the decisions. If the user approves the capture offer, record the summarized agreements using the guidance below. If they decline, defer, or leave the question unanswered, leave files unchanged and do not repeat the same offer unprompted.
+
+Preserve explicit documentation requests and standing authorization: when recording is already authorized, capture without asking again and report what was saved. Respect the active mode and permissions; if writing is unavailable, say capture remains pending rather than claiming the decisions were saved.
+
 When documentation is authorized:
 
 - Capture accepted decisions promptly without asking for the same permission again.
@@ -85,4 +95,4 @@ Do not implement the discussed product or system merely because a design decisio
 
 If a consequential question remains and the user wants to continue, ask it. Do not force closure or manufacture more questions after the user is satisfied.
 
-When the user closes the discussion or asks for a recap, summarize the accepted decisions, their reasoning, and remaining uncertainties. Briefly note useful principles learned or how the user's model evolved when relevant, without inventing evidence of understanding. If files were updated, identify the important changes and verification.
+When the user closes the discussion, asks for a final recap, or the discussion reaches a natural conclusion, summarize the accepted decisions, their reasoning, and remaining uncertainties. Briefly note useful principles learned or how the user's model evolved when relevant, without inventing evidence of understanding. Follow the capture checkpoint above rather than leaving the user to infer that recording is the next step. If files were updated, identify the important changes and verification.
