@@ -1,8 +1,6 @@
 ---
 name: lets-discuss
 description: Have a learning-first discussion about a product, domain, business, or architecture topic. Use when the user invokes lets-discuss with a topic or wants to develop their own ideas and reasoning, explore tradeoffs, and reach decisions collaboratively.
-metadata:
-  opencode/slash: "true"
 ---
 
 # Let's discuss
