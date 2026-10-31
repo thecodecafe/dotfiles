@@ -13,7 +13,7 @@ Personal development-machine configuration for AeroSpace, Ghostty, tmux, Neovim,
 | Kanata | Alternative keyboard remapping and Karabiner switching | [kanata/README.md](kanata/README.md) |
 | tmux | Multiplexing, panes, persistence, and terminal integration | [tmux/README.md](tmux/README.md) |
 | Neovim | Lazy.nvim-based editor configuration | [nvim/README.md](nvim/README.md) |
-| Skills | Shared `aidlc`, `commit`, `grill-me`, `grilling`, `issue-to-review`, and `maprepo` workflows | [skills/README.md](skills/README.md) |
+| Skills | Shared workflows for Codex, Claude Code, OpenCode, and Cursor | [skills/README.md](skills/README.md) |
 | Key repeat | macOS keyboard repetition and press-and-hold settings | [key-repeat/README.md](key-repeat/README.md) |
 
 ## Prerequisites
@@ -35,6 +35,7 @@ From the repository root:
 
 ```sh
 make all                 # link skills, AeroSpace, Ghostty, WezTerm, Karabiner, Neovim, and tmux
+make cursor opencode     # link shared skills plus OpenCode autocomplete commands
 make karabiner          # link the Karabiner Elements configuration
 make keyboard-kanata    # switch keyboard remapping to Kanata (optional)
 make keyboard-karabiner # switch back to Karabiner Elements

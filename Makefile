@@ -3,6 +3,7 @@
 REPO_ROOT := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
 SKILLS_SOURCE := $(REPO_ROOT)/skills
 SKILLS_MANAGER := $(REPO_ROOT)/scripts/manage-skill-links.sh
+OPENCODE_COMMANDS_MANAGER := $(REPO_ROOT)/scripts/manage-opencode-commands.sh
 DOTFILE_MANAGER := $(REPO_ROOT)/scripts/manage-dotfile-link.sh
 GHOSTTY_MANAGER := $(REPO_ROOT)/scripts/manage-ghostty-link.sh
 WEZTERM_CONFIG_SOURCE ?= $(REPO_ROOT)/wezterm/wezterm.lua
@@ -22,6 +23,9 @@ KARABINER_CONFIG_SOURCE ?= $(REPO_ROOT)/karabiner/karabiner.json
 CODEX_SKILLS_DIR ?= $(HOME)/.agents/skills
 CLAUDE_SKILLS_DIR ?= $(HOME)/.claude/skills
 OPENCODE_SKILLS_DIR ?= $(HOME)/.config/opencode/skills
+OPENCODE_COMMANDS_DIR ?= $(HOME)/.config/opencode/commands
+OPENCODE_COMMANDS_CACHE_DIR ?= $(REPO_ROOT)/.generated/opencode/commands
+CURSOR_SKILLS_DIR ?= $(HOME)/.cursor/skills
 GHOSTTY_CONFIG_FILE ?= $(HOME)/.config/ghostty/config
 WEZTERM_CONFIG_FILE ?= $(HOME)/.config/wezterm/wezterm.lua
 NVIM_CONFIG_DIR ?= $(HOME)/.config/nvim
@@ -31,14 +35,15 @@ TMUX_TPM_DIR ?= $(HOME)/.tmux/plugins/tpm
 AEROSPACE_CONFIG_FILE ?= $(HOME)/.config/aerospace/aerospace.toml
 KARABINER_CONFIG_FILE ?= $(HOME)/.config/karabiner/karabiner.json
 
-.PHONY: help all codex claude opencode ghostty wezterm aerospace karabiner nvim nvim-luarocks tmux tmux-tpm key-repeat reset-key-repeat kanata-service-install kanata-service-uninstall kanata-start kanata-stop kanata-restart kanata-status keyboard-kanata keyboard-karabiner karabiner-refresh karabiner-core-start karabiner-core-stop karabiner-core-status unlink-all unlink-codex unlink-claude unlink-opencode unlink-ghostty unlink-wezterm unlink-aerospace unlink-karabiner unlink-nvim unlink-tmux test
+.PHONY: help all codex claude opencode cursor ghostty wezterm aerospace karabiner nvim nvim-luarocks tmux tmux-tpm key-repeat reset-key-repeat kanata-service-install kanata-service-uninstall kanata-start kanata-stop kanata-restart kanata-status keyboard-kanata keyboard-karabiner karabiner-refresh karabiner-core-start karabiner-core-stop karabiner-core-status unlink-all unlink-codex unlink-claude unlink-opencode unlink-cursor unlink-ghostty unlink-wezterm unlink-aerospace unlink-karabiner unlink-nvim unlink-tmux test
 
 help:
 	@printf '%s\n' \
 		'Skill symlink targets:' \
 		'  make codex          Link skills for Codex' \
 		'  make claude         Link skills for Claude Code' \
-		'  make opencode       Link skills for OpenCode' \
+		'  make opencode       Link OpenCode skills and autocomplete commands' \
+		'  make cursor         Link skills for Cursor' \
 		'  make ghostty        Link the Ghostty configuration' \
 		'  make wezterm        Link the WezTerm configuration' \
 		'  make aerospace      Link the AeroSpace configuration' \
@@ -60,6 +65,7 @@ help:
 		'  make unlink-codex   Remove repository-owned Codex links' \
 		'  make unlink-claude  Remove repository-owned Claude links' \
 		'  make unlink-opencode Remove repository-owned OpenCode links' \
+		'  make unlink-cursor  Remove repository-owned Cursor links' \
 		'  make unlink-ghostty Remove the repository-owned Ghostty link' \
 		'  make unlink-wezterm Remove the repository-owned WezTerm link' \
 		'  make unlink-aerospace Remove the repository-owned AeroSpace link' \
@@ -71,7 +77,7 @@ help:
 		'' \
 		'Destination variables can be overridden on the command line.'
 
-all: codex claude opencode ghostty wezterm aerospace karabiner nvim tmux
+all: codex claude opencode cursor ghostty wezterm aerospace karabiner nvim tmux
 
 codex:
 	@"$(SKILLS_MANAGER)" link "$(SKILLS_SOURCE)" "$(CODEX_SKILLS_DIR)"
@@ -81,6 +87,10 @@ claude:
 
 opencode:
 	@"$(SKILLS_MANAGER)" link "$(SKILLS_SOURCE)" "$(OPENCODE_SKILLS_DIR)"
+	@"$(OPENCODE_COMMANDS_MANAGER)" link "$(SKILLS_SOURCE)" "$(OPENCODE_COMMANDS_CACHE_DIR)" "$(OPENCODE_COMMANDS_DIR)"
+
+cursor:
+	@"$(SKILLS_MANAGER)" link "$(SKILLS_SOURCE)" "$(CURSOR_SKILLS_DIR)"
 
 ghostty:
 	@"$(GHOSTTY_MANAGER)" link "$(GHOSTTY_CONFIG_FILE)"
@@ -156,7 +166,7 @@ key-repeat:
 reset-key-repeat:
 	@"$(KEY_REPEAT_RESET_SCRIPT)"
 
-unlink-all: unlink-codex unlink-claude unlink-opencode unlink-ghostty unlink-wezterm unlink-aerospace unlink-karabiner unlink-nvim unlink-tmux
+unlink-all: unlink-codex unlink-claude unlink-opencode unlink-cursor unlink-ghostty unlink-wezterm unlink-aerospace unlink-karabiner unlink-nvim unlink-tmux
 
 unlink-codex:
 	@"$(SKILLS_MANAGER)" unlink "$(SKILLS_SOURCE)" "$(CODEX_SKILLS_DIR)"
@@ -165,7 +175,11 @@ unlink-claude:
 	@"$(SKILLS_MANAGER)" unlink "$(SKILLS_SOURCE)" "$(CLAUDE_SKILLS_DIR)"
 
 unlink-opencode:
+	@"$(OPENCODE_COMMANDS_MANAGER)" unlink "$(SKILLS_SOURCE)" "$(OPENCODE_COMMANDS_CACHE_DIR)" "$(OPENCODE_COMMANDS_DIR)"
 	@"$(SKILLS_MANAGER)" unlink "$(SKILLS_SOURCE)" "$(OPENCODE_SKILLS_DIR)"
+
+unlink-cursor:
+	@"$(SKILLS_MANAGER)" unlink "$(SKILLS_SOURCE)" "$(CURSOR_SKILLS_DIR)"
 
 unlink-ghostty:
 	@"$(GHOSTTY_MANAGER)" unlink "$(GHOSTTY_CONFIG_FILE)"
@@ -189,6 +203,7 @@ test:
 	@"$(REPO_ROOT)/tests/kanata-config-test.sh"
 	@"$(REPO_ROOT)/tests/keyboard-remapper-scripts-test.sh"
 	@"$(REPO_ROOT)/tests/manage-skill-links-test.sh"
+	@"$(REPO_ROOT)/tests/manage-opencode-commands-test.sh"
 	@"$(REPO_ROOT)/tests/manage-dotfile-link-test.sh"
 	@"$(REPO_ROOT)/tests/manage-ghostty-link-test.sh"
 	@"$(REPO_ROOT)/tests/manage-wezterm-link-test.sh"

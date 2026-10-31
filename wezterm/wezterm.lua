@@ -4,7 +4,7 @@ local config = wezterm.config_builder()
 config.font = wezterm.font('AtkynsonMono Nerd Font Mono')
 config.font_size = 12
 
-config.window_background_opacity = 0.9
+config.window_background_opacity = 1.0
 config.window_padding = {
   left = 0,
   right = 0,

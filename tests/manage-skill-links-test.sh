@@ -87,4 +87,68 @@ ln -s "$source_dir/beta" "$foreign_dir/alpha"
 "$manager" unlink "$source_dir" "$foreign_dir"
 assert_link_target "$foreign_dir/alpha" "$source_dir/beta"
 
+run_skill_make() {
+    make -s -C "$project_root" "$@" \
+        "CODEX_SKILLS_DIR=$test_root/make-codex" \
+        "CLAUDE_SKILLS_DIR=$test_root/make-claude" \
+        "OPENCODE_SKILLS_DIR=$test_root/make-opencode" \
+        "OPENCODE_COMMANDS_DIR=$test_root/make-opencode-commands" \
+        "OPENCODE_COMMANDS_CACHE_DIR=$test_root/make-opencode-cache" \
+        "CURSOR_SKILLS_DIR=$test_root/make-cursor"
+}
+
+for agent in codex claude opencode cursor; do
+    agent_destination=$test_root/make-$agent
+    mkdir -p "$agent_destination"
+    printf '%s\n' 'keep this user skill' > "$agent_destination/unrelated"
+    ln -s "$source_dir/alpha" "$agent_destination/unrelated-symlink"
+
+    run_skill_make "$agent"
+    run_skill_make "$agent"
+
+    integration_skill_count=0
+    for repository_skill in "$project_root/skills"/*; do
+        if [ ! -d "$repository_skill" ] || [ ! -f "$repository_skill/SKILL.md" ]; then
+            continue
+        fi
+
+        integration_skill_count=$((integration_skill_count + 1))
+        skill_name=${repository_skill##*/}
+        assert_link_target "$agent_destination/$skill_name" "$repository_skill"
+        cmp "$repository_skill/SKILL.md" "$agent_destination/$skill_name/SKILL.md" \
+            || fail "$agent skill content differs from the authoritative definition"
+        if [ "$agent" = opencode ]; then
+            assert_link_target "$test_root/make-opencode-commands/$skill_name.md" "$test_root/make-opencode-cache/$skill_name.md"
+        fi
+    done
+    [ "$integration_skill_count" -gt 0 ] || fail 'no repository skills were tested'
+
+    run_skill_make "unlink-$agent"
+    for repository_skill in "$project_root/skills"/*; do
+        if [ ! -d "$repository_skill" ] || [ ! -f "$repository_skill/SKILL.md" ]; then
+            continue
+        fi
+
+        skill_name=${repository_skill##*/}
+        [ ! -e "$agent_destination/$skill_name" ] && [ ! -L "$agent_destination/$skill_name" ] \
+            || fail "$agent Make target did not unlink $skill_name"
+        if [ "$agent" = opencode ]; then
+            [ ! -e "$test_root/make-opencode-commands/$skill_name.md" ] && [ ! -L "$test_root/make-opencode-commands/$skill_name.md" ] \
+                || fail 'OpenCode Make target did not unlink its command adapters'
+        fi
+    done
+    [ "$(cat "$agent_destination/unrelated")" = 'keep this user skill' ] \
+        || fail "$agent unlink target removed unrelated data"
+    assert_link_target "$agent_destination/unrelated-symlink" "$source_dir/alpha"
+done
+
+all_commands=$(run_skill_make -n all)
+printf '%s\n' "$all_commands" \
+    | grep -Fq "\"$manager\" link \"$project_root/skills\" \"$test_root/make-cursor\"" \
+    || fail 'make all does not include Cursor skills'
+unlink_all_commands=$(run_skill_make -n unlink-all)
+printf '%s\n' "$unlink_all_commands" \
+    | grep -Fq "\"$manager\" unlink \"$project_root/skills\" \"$test_root/make-cursor\"" \
+    || fail 'make unlink-all does not include Cursor skills'
+
 printf '%s\n' 'All skill symlink tests passed.'
