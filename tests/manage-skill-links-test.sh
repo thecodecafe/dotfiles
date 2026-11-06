@@ -75,11 +75,34 @@ check_collision directory
 check_collision symlink
 check_collision broken-symlink
 
-if command -v script >/dev/null 2>&1; then
+if command -v python3 >/dev/null 2>&1; then
     replacement_dir=$test_root/replacement
     mkdir -p "$replacement_dir"
     printf '%s\n' 'preserve this skill' > "$replacement_dir/alpha"
-    printf 'y\n' | script -q /dev/null "$manager" link "$source_dir" "$replacement_dir" >/dev/null 2>&1
+    python3 - "$manager" "$source_dir" "$replacement_dir" <<'PY'
+import os
+import pty
+import select
+import subprocess
+import sys
+import time
+
+master, slave = pty.openpty()
+process = subprocess.Popen([sys.argv[1], 'link', sys.argv[2], sys.argv[3]],
+                           stdin=slave, stdout=slave, stderr=slave)
+os.close(slave)
+output = b''
+deadline = time.monotonic() + 5
+while b'[y/N]' not in output:
+    remaining = deadline - time.monotonic()
+    if remaining <= 0 or not select.select([master], [], [], remaining)[0]:
+        sys.exit('FAIL: skill replacement did not prompt for confirmation')
+    output += os.read(master, 4096)
+os.write(master, b'y\n')
+if process.wait(timeout=5):
+    sys.exit('FAIL: confirmed skill replacement failed')
+os.close(master)
+PY
     [ -L "$replacement_dir/alpha" ] || fail 'confirmed skill replacement did not create a symlink'
     backup_file=$(find "$replacement_dir" -name 'alpha-backup-*' -type f -print -quit)
     [ -n "$backup_file" ] || fail 'skill replacement did not create a timestamped backup'
