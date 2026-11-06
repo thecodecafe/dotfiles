@@ -200,6 +200,7 @@ unlink-tmux:
 	@"$(DOTFILE_MANAGER)" unlink "$(TMUX_CONFIG_SOURCE)" "$(TMUX_CONFIG_FILE)"
 
 test:
+	@python3 "$(REPO_ROOT)/tests/knowmore-list-test.py"
 	@"$(REPO_ROOT)/tests/kanata-config-test.sh"
 	@"$(REPO_ROOT)/tests/keyboard-remapper-scripts-test.sh"
 	@"$(REPO_ROOT)/tests/manage-skill-links-test.sh"
