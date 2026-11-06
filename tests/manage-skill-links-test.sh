@@ -26,6 +26,17 @@ mkdir -p "$source_dir/alpha" "$source_dir/beta" "$source_dir/ignored"
 printf '%s\n' '---' 'name: alpha' 'description: test' '---' > "$source_dir/alpha/SKILL.md"
 printf '%s\n' '---' 'name: beta' 'description: test' '---' > "$source_dir/beta/SKILL.md"
 
+source_alias=$test_root/source-alias
+ln -s "$source_dir" "$source_alias"
+for same_directory in "$source_dir" "$source_alias"; do
+    "$manager" link "$source_dir" "$same_directory"
+    "$manager" unlink "$source_dir" "$same_directory"
+done
+[ -d "$source_dir/alpha" ] && [ ! -L "$source_dir/alpha" ] || fail 'same-directory link replaced a source skill'
+[ -f "$source_dir/alpha/SKILL.md" ] || fail 'same-directory link removed a source skill'
+[ -z "$(find "$source_dir" -maxdepth 1 -name '*-backup-*' -print -quit)" ] || fail 'same-directory link created a backup'
+assert_link_target "$source_alias" "$source_dir"
+
 destination_dir=$test_root/destination
 mkdir -p "$destination_dir"
 printf '%s\n' 'keep me' > "$destination_dir/unrelated"

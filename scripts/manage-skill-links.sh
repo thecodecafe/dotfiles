@@ -42,6 +42,15 @@ fi
 
 if [ "$operation" = link ]; then
     mkdir -p "$destination_dir"
+fi
+
+if [ -d "$destination_dir" ] &&
+    [ "$(CDPATH= cd -- "$destination_dir" && pwd -P)" = "$source_dir" ]; then
+    printf 'Skill destination already exposes the source directory: %s\n' "$destination_dir"
+    exit 0
+fi
+
+if [ "$operation" = link ]; then
     link_failed=0
 
     for skill_dir in "$source_dir"/*; do
