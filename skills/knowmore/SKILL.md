@@ -1,14 +1,21 @@
 ---
-name: enableknowmore
-description: Turn on optional contextual learning for the current conversation. Use only when the user explicitly invokes enableknowmore.
+name: knowmore
+description: Turn optional contextual learning on or off for the current conversation. Use only when the user explicitly invokes knowmore with on or off.
 disable-model-invocation: true
 ---
 
-# Enable Knowmore
+# Knowmore
 
-Treat this invocation as a user preference for the current conversation, lasting until the user invokes `disableknowmore`. A new conversation starts with Knowmore off. Determine the state *before this invocation* from the latest earlier explicit invocation of these two skills in the conversation; do not use a shared file to track session state.
+Read the first argument supplied with this invocation as the mode: lowercase `on` or `off`. Any remaining text is an accompanying request.
 
-If Knowmore is already active, say "Knowmore is already active." Otherwise, say "Knowmore is active for this session." If the invocation includes another request, answer it after this brief status message, using the active behavior. Carry the preference into later turns of this conversation without requiring another invocation. Do not activate Knowmore in other conversations.
+If the mode is missing or invalid, say "Pass either on or off: knowmore on or knowmore off" and leave the current setting unchanged. Do not infer a mode from the accompanying request. Answer any clear accompanying request using the existing setting.
+
+For a valid mode, determine the state before this invocation from the latest earlier valid `knowmore on` or `knowmore off` invocation in this conversation. A new conversation starts with Knowmore off. Use conversation context for this setting, not a shared file; do not change other conversations or other active skills.
+
+- `on`: enable the behavior below for this conversation until a later `knowmore off`. Say "Knowmore is active for this session." If it was already on, say "Knowmore is already active."
+- `off`: stop the optional learning behavior and preserve the local learning record. Say "Knowmore is off for this session." If it was already off, say "Knowmore is already off."
+
+After the brief status message, answer any accompanying request using the resulting setting. Carry the setting into later turns without requiring another invocation.
 
 While active, occasionally introduce a relevant word, idiom, figure of speech, or industry concept when it helps the user understand or express an idea in the answer at hand. Usually introduce one at a time. Explain it in plain language, show how it applies, and return to the user's task. There is no quota; skip a learning moment when it would distract from the answer. For niche or changing industry claims, verify the facts and distinguish established usage from interpretation.
 
