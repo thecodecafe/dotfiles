@@ -1,14 +1,35 @@
 ---
 name: knowmore
-description: Turn optional contextual learning on or off for the current conversation. Use only when the user explicitly invokes knowmore with on or off.
+description: Control optional contextual learning or list saved concepts by learning status. Use only when the user explicitly invokes knowmore.
 disable-model-invocation: true
 ---
 
 # Knowmore
 
-Read the first argument supplied with this invocation as the mode: lowercase `on` or `off`. Any remaining text is an accompanying request.
+Recognize lowercase `on`, `off`, `introduced`, `working on`, or `familiar` as the command. Match the two-word command `working on` without requiring quotes.
 
-If the mode is missing or invalid, say "Pass either on or off: knowmore on or knowmore off" and leave the current setting unchanged. Do not infer a mode from the accompanying request. Answer any clear accompanying request using the existing setting.
+If the command is missing or invalid, show usage: `knowmore on | off | introduced | working on | familiar`. Leave activation and learning notes unchanged; do not infer a command from an accompanying request.
+
+## Status listings
+
+`introduced`, `working on`, and `familiar` list saved concepts with that status, whether Knowmore is on or off. These commands never toggle activation, update learning notes, or reassess understanding. Only explicit `on` and `off` commands affect activation history.
+
+An optional single angle-bracket block accepts comma-separated `key: value` pairs, for example `knowmore familiar <order by: most recent, limit: 10>`:
+
+- `order by`: `most recent` (default) or `oldest first`, based on the last learning update.
+- `limit`: a positive whole number; omit it to list all matches. Sort before limiting.
+
+Use `scripts/list_notes.py` beside this skill to read the local notes and produce the listing. Pass the full listing argument as one safely quoted `--query` value, for example:
+
+```sh
+python3 <skill-directory>/scripts/list_notes.py --query 'working on <order by: most recent, limit: 10>'
+```
+
+Resolve `<skill-directory>` to this skill's actual directory; never interpolate raw user input into shell code. Show the returned table (concept, domain, learning context, updated time), or its empty-result message. Surface malformed filters or unreadable notes as errors rather than inventing results. Unknown keys, duplicate keys, invalid values, extra text, and malformed brackets are rejected without writes. Dated entries sort before entries with unknown dates in either direction; equal timestamps retain their recorded order.
+
+## Activation
+
+For `on` and `off`, any remaining text is an accompanying request.
 
 For a valid mode, determine the state before this invocation from the latest earlier valid `knowmore on` or `knowmore off` invocation in this conversation. A new conversation starts with Knowmore off. Use conversation context for this setting, not a shared file; do not change other conversations or other active skills.
 
