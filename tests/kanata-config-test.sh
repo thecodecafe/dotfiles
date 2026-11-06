@@ -46,9 +46,9 @@ def navigation(key, repeats=0):
 down = hyper_down + navigation('Down') + hyper_up
 cases = [
     ('single quick tap',
-     'd:caps t:50 u:caps t:500', escape, (145, 155)),
+     'd:caps t:50 u:caps t:500', escape, (245, 255)),
     ('single tap near hold threshold',
-     'd:caps t:140 u:caps t:500', escape, (235, 245)),
+     'd:caps t:140 u:caps t:500', escape, (335, 345)),
     ('single 200 ms hold',
      'd:caps t:200 u:caps t:500', control, (145, 155)),
     ('single 400 ms hold',
@@ -60,22 +60,22 @@ cases = [
      ['↓LCtrl', '↓J', '↑J', '↑LCtrl'], (15, 25)),
     ('fast double tap and hold',
      'd:caps t:50 u:caps t:50 d:caps t:200 d:j t:50 u:j t:50 u:caps t:500',
-     down, (245, 255)),
+     down, (95, 105)),
     ('second press 90 ms after a 140 ms tap',
      'd:caps t:140 u:caps t:90 d:caps t:200 d:j t:50 u:j t:50 u:caps t:500',
-     down, (375, 385)),
+     down, (225, 235)),
     ('second press just inside double-tap window',
-     'd:caps t:100 u:caps t:99 d:caps t:200 d:j t:50 u:j t:50 u:caps t:500',
-     down, (344, 354)),
+     'd:caps t:100 u:caps t:199 d:caps t:200 d:j t:50 u:j t:50 u:caps t:500',
+     down, (294, 304)),
     ('second press outside double-tap window',
-     'd:caps t:100 u:caps t:101 d:caps t:200 d:j t:50 u:j t:50 u:caps t:500',
-     escape + ['↓LCtrl', '↓J', '↑J', '↑LCtrl'], (195, 205)),
+     'd:caps t:100 u:caps t:201 d:caps t:200 d:j t:50 u:j t:50 u:caps t:500',
+     escape + ['↓LCtrl', '↓J', '↑J', '↑LCtrl'], (295, 305)),
     ('Hyper navigation before second hold timeout',
      'd:caps t:50 u:caps t:50 d:caps t:10 d:j t:50 u:j t:50 u:caps t:500',
-     down, (105, 115)),
+     down, (95, 105)),
     ('double quick tap',
      'd:caps t:50 u:caps t:50 d:caps t:50 u:caps t:500',
-     escape, (145, 155)),
+     hyper_down + hyper_up, (95, 105)),
     ('tap resolved by another key',
      'd:caps t:50 u:caps t:50 d:j t:50 u:j t:500',
      escape + ['↓J', '↑J'], (95, 105)),
@@ -84,23 +84,23 @@ cases = [
      escape + ['↓A', '↑A', '↓LCtrl', '↓J', '↑J', '↑LCtrl'], (95, 105)),
     ('other Hyper shortcuts retain modifiers',
      'd:caps t:50 u:caps t:50 d:caps t:200 d:a t:50 u:a t:50 u:caps t:500',
-     hyper_down + ['↓A', '↑A'] + hyper_up, (245, 255)),
+     hyper_down + ['↓A', '↑A'] + hyper_up, (95, 105)),
     ('all arrows and navigation repeat',
      'd:caps t:50 u:caps t:50 d:caps t:200 d:h t:50 u:h t:50 d:j t:50 r:j t:50 u:j t:50 d:k t:50 u:k t:50 d:l t:50 u:l t:50 u:caps t:500',
      hyper_down + navigation('Left') + navigation('Down', repeats=1)
-     + navigation('Up') + navigation('Right') + hyper_up, (245, 255)),
+     + navigation('Up') + navigation('Right') + hyper_up, (95, 105)),
     ('Caps released before navigation key',
      'd:caps t:50 u:caps t:50 d:caps t:200 d:j t:50 u:caps t:50 u:j t:50 d:a t:50 u:a t:500',
-     hyper_down + hyper_up + ['↓Down', '↑Down', '↓A', '↑A'], (245, 255)),
+     hyper_down + hyper_up + ['↓Down', '↑Down', '↓A', '↑A'], (95, 105)),
     ('navigation released before Caps returns to base',
      'd:caps t:50 u:caps t:50 d:caps t:200 d:j t:50 u:j t:50 u:caps t:50 d:j t:50 u:j t:500',
-     down + ['↓J', '↑J'], (245, 255)),
+     down + ['↓J', '↑J'], (95, 105)),
     ('Control hold does not arm Hyper',
      'd:caps t:200 u:caps t:50 d:caps t:50 u:caps t:500',
      control + escape, (145, 155)),
     ('two separate Escape taps',
      'd:caps t:50 u:caps t:500 d:caps t:50 u:caps t:500',
-     escape * 2, (145, 155)),
+     escape * 2, (245, 255)),
 ]
 
 for name, sequence, expected, first_output_range in cases:
@@ -142,7 +142,7 @@ awk '
 ' "$config" || fail 'MX Master 2S must be excluded from macOS keyboard capture'
 grep -Fq '(defsrc caps h j k l)' "$config" || fail 'Caps Lock and navigation keys are not declared'
 caps_action=$(awk '{ sub(/;;.*/, ""); printf "%s ", $0 }' "$config" | tr -s '[:space:]' ' ')
-printf '%s\n' "$caps_action" | grep -Fq 'caps (tap-hold-press 0 150 (tap-dance 100 ( esc (tap-hold-press 0 150 esc @hyper) )) lctl )' || fail 'Caps Lock must resolve holds before starting double-tap detection'
+printf '%s\n' "$caps_action" | grep -Fq 'caps (tap-hold-press 0 150 (tap-dance 200 ( esc @hyper )) lctl )' || fail 'Caps Lock must resolve holds before starting double-tap detection and activate Hyper on the second press'
 grep -Fq 'hyper (multi (layer-while-held hyper) lctl lalt lmet lsft)' "$config" || fail 'Hyper modifiers/layer are incorrect'
 grep -Eq '_[[:space:]]+\(unmod left\)[[:space:]]+\(unmod down\)[[:space:]]+\(unmod up\)[[:space:]]+\(unmod right\)' "$config" || fail 'Hyper navigation must map H/J/K/L to unmodified arrows'
 

@@ -1,4 +1,4 @@
-;; Caps Lock: tap Escape, hold Control, double-tap and hold Hyper.
+;; Caps Lock: tap Escape, hold Control, double-tap for Hyper while held.
 ;; Hyper+H/J/K/L sends the arrow keys.
 
 (defcfg
@@ -15,11 +15,12 @@
 (defalias
   hyper (multi (layer-while-held hyper) lctl lalt lmet lsft)
   ;; Resolve holds first; a completed tap starts the double-tap window.
-  ;; Zero tap-repress timeouts let every hold resolve to its modifier.
+  ;; A zero tap-repress timeout lets a rapid first hold resolve to Control.
+  ;; Activate Hyper on the second press so releasing it quickly cannot send Escape.
   caps (tap-hold-press 0 150
-    (tap-dance 100 (
+    (tap-dance 200 (
       esc
-      (tap-hold-press 0 150 esc @hyper)
+      @hyper
     ))
     lctl
   )
