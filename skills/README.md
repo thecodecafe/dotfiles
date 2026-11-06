@@ -5,6 +5,8 @@ This directory contains reusable workflow instructions for coding agents:
 - `aidlc`: initializes and runs the AWS AI-DLC workflow.
 - `api-route-docs`: discovers HTTP API routes within a supplied scope and documents them as OpenAPI or a Postman collection.
 - `commit`: plans and creates small conventional commits from the current Git diff.
+- `disableknowmore`: turns off optional contextual learning for the current conversation.
+- `enableknowmore`: turns on optional contextual learning for the current conversation.
 - `grill-me`: invokes Matthew Pocock's interview workflow to sharpen a plan or design; it delegates to `grilling`.
 - `grilling`: stress-tests a plan or idea through rounds of focused questions. Both skills are vendored from [mattpocock/skills](https://github.com/mattpocock/skills).
 - `issue-to-review`: implements a GitHub or GitLab issue in an isolated worktree, then prepares a ready-for-review PR or MR.
@@ -59,6 +61,12 @@ Only when wrapping up, the agent recaps any accepted decisions that remain unrec
 [Codex supports explicit skill mentions and symlinked skill directories](https://learn.chatgpt.com/docs/build-skills). [Claude Code invokes skills as slash commands and appends arguments when the skill has no argument placeholder](https://code.claude.com/docs/en/skills). OpenCode's command adapter delegates to its native skill loader, and Cursor uses native skill discovery; all four installations share the same workflow.
 
 If a running agent does not show the new skill, start a fresh session. Checking symlink targets confirms installation, not discovery by an already-running session.
+
+## Knowmore
+
+Invoke `$enableknowmore` in Codex or `/enableknowmore` in Claude Code, OpenCode, or Cursor to add occasional, relevant words, expressions, and industry concepts to answers throughout the current conversation. Invoke the matching `disableknowmore` skill to return to the conversation's usual behavior. Both skills require explicit invocation. A repeated call reports that Knowmore is already on or off; a question included with the call is still answered.
+
+Knowmore keeps a small learning record at `skills/enableknowmore/learning-notes.md`. It records useful terms and clear signs of understanding, remains available across conversations on this machine, and is ignored by Git. Turning Knowmore off does not erase the record or change other active skills. Activation follows conversation context rather than a platform switch, so a new conversation starts with it off and a long conversation can lose the setting if its relevant context is lost.
 
 ## Dependencies
 
