@@ -5,7 +5,7 @@ This directory contains reusable workflow instructions for coding agents:
 - `aidlc`: initializes and runs the AWS AI-DLC workflow.
 - `api-route-docs`: discovers HTTP API routes within a supplied scope and documents them as OpenAPI or a Postman collection.
 - `commit`: plans and creates small conventional commits from the current Git diff.
-- `knowmore`: turns optional contextual learning on or off for the current conversation.
+- `knowmore`: controls optional contextual learning and lists saved concepts by learning status.
 - `grill-me`: invokes Matthew Pocock's interview workflow to sharpen a plan or design; it delegates to `grilling`.
 - `grilling`: stress-tests a plan or idea through rounds of focused questions. Both skills are vendored from [mattpocock/skills](https://github.com/mattpocock/skills).
 - `issue-to-review`: implements a GitHub or GitLab issue in an isolated worktree, then prepares a ready-for-review PR or MR.
@@ -63,9 +63,15 @@ If a running agent does not show the new skill, start a fresh session. Checking 
 
 ## Knowmore
 
-Invoke `$knowmore on` in Codex or `/knowmore on` in Claude Code, OpenCode, or Cursor to add occasional, relevant words, expressions, and industry concepts to answers throughout the current conversation. Use `$knowmore off` or `/knowmore off` to return to the conversation's usual behavior. The skill requires explicit invocation and a lowercase `on` or `off` argument. A missing or invalid argument displays usage guidance without changing the setting. A repeated call reports that Knowmore is already on or off; a question after the mode argument is still answered.
+Invoke `$knowmore on` in Codex or `/knowmore on` in Claude Code, OpenCode, or Cursor to introduce a useful word, expression, or concept at the first relevant substantive answer, then periodically as the discussion develops. Each explanation connects to the task; routine acknowledgements and simple status messages need no lesson. Use `$knowmore off` or `/knowmore off` to return to the conversation's usual behavior. The skill requires explicit invocation. A missing or invalid command displays usage guidance without changing the setting. A repeated call reports that Knowmore is already on or off; a question after `on` or `off` is still answered.
+
+List saved concepts with `$knowmore introduced`, `$knowmore working on`, or `$knowmore familiar` (or the corresponding `/knowmore` commands). Listings work while Knowmore is off and never change activation or notes. Add optional filters such as `$knowmore familiar <order by: most recent, limit: 10>`. Supported lowercase keys are `order by` (`most recent` or `oldest first`) and `limit` (a positive whole number), separated by commas inside one `<...>` block. The default lists all matching concepts, newest learning update first. Entries with unknown dates appear after dated entries in either order. Invalid filters show guidance without changing anything.
 
 Knowmore keeps a small learning record at `skills/knowmore/learning-notes.md`. It records useful terms and clear signs of understanding, remains available across conversations on this machine, and is ignored by Git. Turning Knowmore off does not erase the record or change other active skills. Activation follows conversation context rather than a platform switch, so a new conversation starts with it off and a long conversation can lose the setting if its relevant context is lost.
+
+Each concept taught through Knowmore is saved as **introduced** in the same response without waiting for a reaction or a separate recording request. Asking for further explanation marks it **working on**; explicitly understanding it or using it accurately later supports **familiar**. Silence does not establish familiarity, and repeated explanations update the existing entry rather than duplicating it. If mode restrictions, permissions, or a write failure prevent saving, the agent explains that the learning moment was not recorded. Activation acknowledgements alone do not prove that teaching or recording has happened.
+
+Each entry includes an `Updated at` UTC timestamp reflecting its last change in status, domain, or learning context. Reading and listing do not change it; historical entries without a date retain `unknown` until a real learning update occurs.
 
 ## Dependencies
 
